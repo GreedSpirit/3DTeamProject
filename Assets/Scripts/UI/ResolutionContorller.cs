@@ -13,7 +13,6 @@ public class ResolutionContorller : MonoBehaviour
 
     private void Start()
     {
-        
         SetDropdown();
         SetUpToggle();
     }
@@ -48,6 +47,7 @@ public class ResolutionContorller : MonoBehaviour
         resolutionDropdown.AddOptions(new List<string>(options));
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
+        SetResolution();
     }
 
     public void SetResolution()
