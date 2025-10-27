@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _mouseSensitivity = 2.5f;//마우스 민감도
 
 
-    [SerializeField] private float _cameraRotationLimit;// 카메라 상하한계,
+    [SerializeField] private float _cameraRotationLimit=90;// 카메라 상하한계,
     [SerializeField] private float baseFOV = 60;
     [SerializeField] private float ZoomFOV = 30;
 
