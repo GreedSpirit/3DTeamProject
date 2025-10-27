@@ -6,12 +6,12 @@ public class MenuButton : MonoBehaviour
 {
     public AudioClip hoverSound;
     public AudioClip clickSound;
+
     private AudioSource audioSource;
 
     void Start()
     {
-        if(audioSource == null)
-            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void HoverSoundPlay()
