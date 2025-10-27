@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _dashSpeed = 100f;//대쉬 속도
     [SerializeField] private float _JumpForce = 0.5f;//점프력
 
-    [SerializeField] private float tmpRecoil = 1.0f;//반동 테스트값
+   // [SerializeField] private float tmpRecoil = 1.0f;//반동 테스트값
 
     [SerializeField] private float _mouseSensitivity = 2.5f;//마우스 민감도
 
@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         _myRigid = GetComponent<Rigidbody>();
     }
@@ -52,9 +53,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.red);
+        //Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.red);
 
-        Shoot();//총알발사
+        //Shoot();//총알발사
 
 
     }
@@ -144,13 +145,13 @@ public class PlayerController : MonoBehaviour
         _myCamera.transform.localEulerAngles = new Vector3(_curCameraRotationX, 0f, 0f);
 
     }
-    private void Shoot()//무기사용
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            //Gun.Shoot(); //TryShoot?
-            _curCameraRotationX -= tmpRecoil;
+    //private void Shoot()//무기사용
+    //{
+    //    if (Input.GetMouseButtonDown(0))
+    //    {
+    //        //Gun.Shoot(); //TryShoot?
+    //        _curCameraRotationX -= tmpRecoil;
 
-        }
-    }
+    //    }
+    //}
 }
