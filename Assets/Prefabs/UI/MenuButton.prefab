@@ -12,8 +12,10 @@ GameObject:
   - component: {fileID: 1778331626596647535}
   - component: {fileID: 726285688051450625}
   - component: {fileID: 5666160995362778470}
+  - component: {fileID: 4922328074781560221}
+  - component: {fileID: -3642841694359650330}
   m_Layer: 5
-  m_Name: Button
+  m_Name: MenuButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -120,7 +122,63 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 726285688051450625}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3642841694359650330}
+        m_TargetAssemblyTypeName: Button, Assembly-CSharp
+        m_MethodName: ClickSoundPlay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &4922328074781560221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2361438775992529194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: -3642841694359650330}
+          m_TargetAssemblyTypeName: Button, Assembly-CSharp
+          m_MethodName: HoverSoundPlay
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &-3642841694359650330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2361438775992529194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 242d4fa5a26085541bf87d84a8fbe23f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverSound: {fileID: 8300000, guid: 1e7a587164fcbef45b40536469e6c432, type: 3}
+  clickSound: {fileID: 8300000, guid: 37c9133889e2bfc4296ead93a281acc2, type: 3}
+  audioSource: {fileID: 0}
 --- !u!1 &3512320808356692471
 GameObject:
   m_ObjectHideFlags: 0
