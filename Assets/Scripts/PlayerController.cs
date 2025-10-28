@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -15,30 +16,51 @@ public class PlayerController : MonoBehaviour
     int _gunIndex; // 현재 무기 인덱스
 
     private KeyCode[] _weaponKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };//무기 교체시 키보드 1 2 3 4 미리담아두기
-
-    [SerializeField] private LayerMask _groundLayer;//레이캐스트 체크대상
+    [Header("레이캐스트")]
+    [SerializeField] private LayerMask _groundLayer;//지상 레이캐스트 체크대상 레이어
     [SerializeField] private float _groundCheckDistance = 1.1f;//지상 체크 레이캐스트 길이
-    [SerializeField] private float  _interactDistance= 2f;//상호작용 레이캐스트 길이
+    [SerializeField] private float _interactDistance = 2f;//상호작용 레이캐스트 길이
 
+    [Header("기본 이동 제어")]
     [SerializeField] private float _moveSpeed = 10f;//이동 속도
     [SerializeField] private float _dashSpeed = 20f;//대쉬 속도
     [SerializeField] private float _JumpForce = 0.5f;//점프력
 
     [SerializeField] private float _tmpRecoil = 1.0f;//반동 테스트값
 
+    [Header("카메라 제어")]
     [SerializeField] private float _mouseSensitivity = 2.5f;//마우스 민감도
-
+    [SerializeField] private Camera _myCamera;
     [SerializeField] private float _cameraRotationLimit = 90;// 카메라 상하한계,
     [SerializeField] private float _baseFOV = 60; // 기본 시야 각
     [SerializeField] private float _zoomFOV = 30; // 줌 시야 각
 
+    [Header("구르기")]
     [SerializeField] private float _rollSpeed = 25f;//구르기 속도
     [SerializeField] private float _rollTime = 0.5f;//구르기 시간
     [SerializeField] private float _rollSize = 0.7f;//구를때 크기 비율
-    private Vector3 originalScale;
-    private bool isRolling = false;
+    private Vector3 _originalScale;
+    private bool _isRolling = false;
 
-    [SerializeField] private Camera _myCamera;
+    private bool _isAlive = true;
+    private bool _isWalking = true;
+    private bool _isDashing = true;
+
+
+    [Header("걷기 소리 간격")]
+    [SerializeField] private float _moveSoundInterval = 0.5f;//구르기 속도
+    [SerializeField] private float _dashSoundInterval = 0.2f;//구르기 속도
+    private AudioSource[] audioSources;
+    private float lastStepSoundTime = 0f;
+
+
+    [Header("죽음")]
+    [SerializeField]
+    private float _deathAnimeMotionTime = 1.0f;
+    private Quaternion _aliveRotation;
+    private Quaternion _deathRotation;
+    private float _elapsedTime = 0f;
+
     [SerializeField]
     public int maxHp// 최대체력
     {
@@ -56,18 +78,24 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.visible = false;
         _myRigid = GetComponent<Rigidbody>();
-        originalScale = transform.localScale;
+        _originalScale = transform.localScale;
 
         NotifyHealthChanged();
+        audioSources = GetComponents<AudioSource>();
     }
 
     private void OnEnable()
     {
         _currentHp = maxHp;
     }
-
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            OnDamage(10);
+        }
+
+
         if (Time.timeScale == 0)
         {
             Cursor.visible = true;
@@ -75,10 +103,13 @@ public class PlayerController : MonoBehaviour
             return;
         }
         Debug.DrawRay(transform.position, Vector3.down * _groundCheckDistance, Color.red);
+        Death();
 
-        if (isRolling)
+        if (!_isAlive)
             return;
 
+        if (_isRolling)
+            return;
         Shoot();//총알발사
         TryRolling();
         Reloading();
@@ -87,7 +118,10 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        if (isRolling)
+
+        if (!_isAlive)
+            return;
+        if (_isRolling)
             return;
         Jump();//점프
         Move();//이동
@@ -98,25 +132,50 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        if (isRolling)
+
+        if (!_isAlive)
             return;
+        if (_isRolling)
+            return;
+        StepSoundPlay();
         ZoomIn();//줌
         PlayerRotate();//화면 좌우회전
         CameraRotate();//화면 상하이동
     }
     public void OnDamage(int _dmg)
     {
+        if (!_isAlive)
+            return;
         _currentHp -= _dmg;
+        audioSources[1].Play();
         //OnHealthChange?.Invoke(_currentHp);
         NotifyHealthChanged();
         if (_currentHp <= 0)
         {
+            _isAlive = false;
             OnDeath?.Invoke();
+            audioSources[2].Play();
         }
     }
 
+    void Death()//점점 넘어지기
+    {
+        if (!_isAlive)
+        {
+            if (_elapsedTime < _deathAnimeMotionTime)
+            {
+                _elapsedTime += Time.deltaTime;
+                float t = _elapsedTime / _deathAnimeMotionTime;
+
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, 90), t);
+                return;
+            }
+        }
+        OnDeath?.Invoke();
+
+    }
     // 무기교체
-     void ChangeWeapon()
+    void ChangeWeapon()
     {
         for (int i = 0; i < _weaponKeys.Length; i++) // 번호눌러서 교체
         {
@@ -135,18 +194,18 @@ public class PlayerController : MonoBehaviour
 
         if (scroll != 0)
         {
-            if(scroll > 0f)
+            if (scroll > 0f)
             {
                 _gunIndex--;
-                if(_gunIndex < 0)
+                if (_gunIndex < 0)
                 {
-                    _gunIndex = _weaponList.Count-1;
+                    _gunIndex = _weaponList.Count - 1;
                 }
             }
-            else if(scroll < 0f)
+            else if (scroll < 0f)
             {
                 _gunIndex++;
-                if(_gunIndex >= _weaponList.Count)
+                if (_gunIndex >= _weaponList.Count)
                 {
                     _gunIndex = 0;
                 }
@@ -155,7 +214,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    
+
 
     private void Move()//이동
     {
@@ -166,14 +225,42 @@ public class PlayerController : MonoBehaviour
         Vector3 MoveDir = (moveHor + moveVer).normalized;
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
+            _isWalking = false;
+            _isDashing = true;
             _myRigid.velocity = new Vector3(MoveDir.x * _dashSpeed, _myRigid.velocity.y, MoveDir.z * _dashSpeed);
+        }
+        else if(Input.GetKey(KeyCode.W) ||
+                Input.GetKey(KeyCode.A) ||
+                Input.GetKey(KeyCode.S) ||
+                 Input.GetKey(KeyCode.D))
+        {
+            _isWalking = true;
+            _isDashing = false;
+            _myRigid.velocity = new Vector3(MoveDir.x * _moveSpeed, _myRigid.velocity.y, MoveDir.z * _moveSpeed);
         }
         else
         {
+            _isWalking = false;
+            _isDashing = false;
 
-            _myRigid.velocity = new Vector3(MoveDir.x * _moveSpeed, _myRigid.velocity.y, MoveDir.z * _moveSpeed);
         }
 
+    }
+    private void StepSoundPlay()
+    {
+        float stepSoundTime;
+        if (_isWalking)
+            stepSoundTime = _moveSoundInterval;
+        else if (_isDashing)
+            stepSoundTime = _dashSoundInterval;
+        else
+            return;
+
+        if (Time.time - lastStepSoundTime >= stepSoundTime)
+        {
+            audioSources[0].Play();
+            lastStepSoundTime = Time.time;
+        }
     }
     private void Jump()//점프
     {
@@ -191,7 +278,7 @@ public class PlayerController : MonoBehaviour
 
     void TryRolling()//구르기 체크
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !isRolling)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isRolling)
         {
             Debug.Log("roll");
             StartCoroutine(Rolling());
@@ -199,16 +286,16 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator Rolling() //구르기 이동
     {   // 높이 줄이기
-        transform.localScale = new Vector3(originalScale.x, originalScale.y * _rollSize, originalScale.z);
+        transform.localScale = new Vector3(_originalScale.x, _originalScale.y * _rollSize, _originalScale.z);
         _myRigid.velocity = transform.forward * _rollSpeed;
-        isRolling = true;
+        _isRolling = true;
 
         // rollTime 동안 구르기 유지
         yield return new WaitForSeconds(_rollTime);
 
         // 높이 복구
-        transform.localScale = originalScale;
-        isRolling = false;
+        transform.localScale = _originalScale;
+        _isRolling = false;
     }
 
     void Interact()
@@ -216,9 +303,9 @@ public class PlayerController : MonoBehaviour
         Ray ray = _myCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
         RaycastHit hit;
         Debug.DrawRay(ray.origin, ray.direction * _interactDistance, Color.yellow, 1f);
-        if (Physics.Raycast(ray, out hit, _interactDistance)&& hit.collider.TryGetComponent<IInteractable>(out IInteractable inter))  
+        if (Physics.Raycast(ray, out hit, _interactDistance) && hit.collider.TryGetComponent<IInteractable>(out IInteractable inter))
         {
-            if(inter.isInteract)
+            if (inter.isInteract)
             {
                 Debug.Log("상호작용 가능");
                 if (Input.GetKeyDown(KeyCode.F))
@@ -231,7 +318,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            
+
         }
     }
     private void ZoomIn()//줌 기능
