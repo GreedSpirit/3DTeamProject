@@ -608,8 +608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc07274cddc1dc46a89c988a2a6c296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainCamera: {fileID: 6512145774874027785, guid: 8acc5b983d99e594a8c16ebdb19eb421, type: 3}
-  _shootAudio: {fileID: 0}
+  _shootAudio: {fileID: 8300000, guid: b2d159f7e00d44d9bbc2d50a0c4fef59, type: 3}
   _reloadAudio: {fileID: 0}
   _maxAmmo: 120
   _currentAmmo: 30
