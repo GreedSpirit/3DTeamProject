@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -28,7 +25,9 @@ public class UISoundSetting : MonoBehaviour
         else
         {
             _masterSlider.value = 0.7f;
+            PlayerPrefs.SetFloat("TitleMasterVolume", 0.7f);
         }
+        _audioMixer.SetFloat("Master", Mathf.Log10(PlayerPrefs.GetFloat("TitleMasterVolume")) * 20);
 
         if (PlayerPrefs.HasKey("TitleBGMVolume"))
         {
@@ -37,7 +36,9 @@ public class UISoundSetting : MonoBehaviour
         else
         {
             _bgmSlider.value = 0.7f;
+            PlayerPrefs.SetFloat("TitleBGMVolume", 0.7f);
         }
+        _audioMixer.SetFloat("BGM", Mathf.Log10(PlayerPrefs.GetFloat("TitleBGMVolume")) * 20);
 
         if (PlayerPrefs.HasKey("TitleSFXVolume"))
         {
@@ -46,7 +47,9 @@ public class UISoundSetting : MonoBehaviour
         else
         {
             _sfxSlider.value = 0.7f;
+            PlayerPrefs.SetFloat("TitleSFXVolume", 0.7f);
         }
+        _audioMixer.SetFloat("SFX", Mathf.Log10(PlayerPrefs.GetFloat("TitleSFXVolume")) * 20);
     }
 
     public void SetMasterVolume(float volume)
