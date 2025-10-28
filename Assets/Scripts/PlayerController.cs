@@ -260,7 +260,7 @@ public class PlayerController : MonoBehaviour
         float rotationX = Input.GetAxisRaw("Mouse Y");
         float cameraRotaionX = rotationX * _mouseSensitivity;
         _curCameraRotationX -= cameraRotaionX;
-        _curCameraRotationX = Math.Clamp(_curCameraRotationX, -_cameraRotationLimit, _cameraRotationLimit);
+        _curCameraRotationX = Math.Clamp    (_curCameraRotationX, -_cameraRotationLimit, _cameraRotationLimit);
         _myCamera.transform.localEulerAngles = new Vector3(_curCameraRotationX, 0f, 0f);
 
     }

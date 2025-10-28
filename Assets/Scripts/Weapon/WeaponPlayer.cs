@@ -18,7 +18,7 @@ public class WeaponPlayer : MonoBehaviour
 
     [SerializeField] private LayerMask _groundLayer;//레이캐스트 체크대상
     [SerializeField] private float _groundCheckDistance = 1.1f;//지상 체크 레이캐스트 길이
-    [SerializeField] private float  _interactDistance= 2f;//상호작용 레이캐스트 길이
+    //[SerializeField] private float _interactDistance = 2f;//상호작용 레이캐스트 길이
 
     [SerializeField] private float _moveSpeed = 10f;//이동 속도
     [SerializeField] private float _dashSpeed = 20f;//대쉬 속도
@@ -82,7 +82,7 @@ public class WeaponPlayer : MonoBehaviour
         Shoot();//총알발사
         TryRolling();
         Reloading();
-        Interact();
+        //Interact();
     }
     private void FixedUpdate()
     {
@@ -116,7 +116,7 @@ public class WeaponPlayer : MonoBehaviour
     }
 
     // 무기교체
-     void ChangeWeapon()
+    void ChangeWeapon()
     {
         for (int i = 0; i < _weaponKeys.Length; i++) // 번호눌러서 교체
         {
@@ -135,18 +135,18 @@ public class WeaponPlayer : MonoBehaviour
 
         if (scroll != 0)
         {
-            if(scroll > 0f)
+            if (scroll > 0f)
             {
                 _gunIndex--;
-                if(_gunIndex < 0)
+                if (_gunIndex < 0)
                 {
-                    _gunIndex = _weaponList.Count-1;
+                    _gunIndex = _weaponList.Count - 1;
                 }
             }
-            else if(scroll < 0f)
+            else if (scroll < 0f)
             {
                 _gunIndex++;
-                if(_gunIndex >= _weaponList.Count)
+                if (_gunIndex >= _weaponList.Count)
                 {
                     _gunIndex = 0;
                 }
@@ -155,7 +155,7 @@ public class WeaponPlayer : MonoBehaviour
         }
 
     }
-    
+
 
     private void Move()//이동
     {
@@ -211,29 +211,30 @@ public class WeaponPlayer : MonoBehaviour
         isRolling = false;
     }
 
-    void Interact()
-    {
-        Ray ray = _myCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-        RaycastHit hit;
-        Debug.DrawRay(ray.origin, ray.direction * _interactDistance, Color.yellow, 1f);
-        if (Physics.Raycast(ray, out hit, _interactDistance)&& hit.collider.TryGetComponent<IInteractable>(out IInteractable inter))  
-        {
-            if(inter.isInteract)
-            {
-                Debug.Log("상호작용 가능");
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    if (inter.Use() && inter is BulletBox)
-                    {
-                        //_curGun.RefillAmmo();
-                        Debug.Log("탄약 보충");
-                    }
-                }
-            }
+    //void Interact()
+    //{
+    //    Ray ray = _myCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+    //    RaycastHit hit;
+    //    Debug.DrawRay(ray.origin, ray.direction * _interactDistance, Color.yellow, 1f);
+    //    if (Physics.Raycast(ray, out hit, _interactDistance) && hit.collider.TryGetComponent<IInteractable>(out IInteractable inter))
+    //    {
+    //        if (inter.isInteract)
+    //        {
+    //            Debug.Log("상호작용 가능");
+    //            if (Input.GetKeyDown(KeyCode.F))
+    //            {
+    //                if (inter.Use() && inter is BulletBox)
+    //                {
+    //                    //_curGun.RefillAmmo();
+    //                    Debug.Log("탄약 보충");
+    //                }
+    //            }
+    //        }
 
-            
-        }
-    }
+
+    //    }
+    //}
+
     private void ZoomIn()//줌 기능
     {
         if (Input.GetMouseButtonDown(1))
