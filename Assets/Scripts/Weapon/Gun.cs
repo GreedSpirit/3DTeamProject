@@ -20,9 +20,12 @@ public class Gun : MonoBehaviour
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
     private const float _reloadTime = 3.0f; // 재장전 시간
+
     private bool isReloading = false; // 현재 장전 중인지 확인
 
+    public Coroutine _reloadCoroutine; // 현재 실행 중인 재장전 코루틴
     private RaycastHit hitInfo;
+
 
     void Start()
     {
@@ -55,14 +58,14 @@ public class Gun : MonoBehaviour
             // R키를 눌렀다면 Reload
             if (Input.GetKeyDown(KeyCode.R))
             {
-                StartCoroutine(ReloadCoroutine());
+                _reloadCoroutine = StartCoroutine(ReloadCoroutine());
             }
         }
 
         // 장전 중이 아닌데, 현재 탄약이 0이고, 남은 탄약이 있다면
         if (!isReloading && _currentAmmo <= 0 && _maxAmmo > 0)
         {
-            StartCoroutine(ReloadCoroutine());
+            _reloadCoroutine = StartCoroutine(ReloadCoroutine());
         }
     }
 
@@ -75,6 +78,7 @@ public class Gun : MonoBehaviour
         {
             Debug.Log("이미 탄창이 꽉 찼습니다.");
             isReloading = false;
+            _reloadCoroutine = null;
             yield break;
         }
         // 남은 탄약이 없을 경우
@@ -82,6 +86,7 @@ public class Gun : MonoBehaviour
         {
             Debug.Log("남은 탄약이 없습니다.");
             isReloading = false;
+            _reloadCoroutine = null;
             yield break;
         }
 
@@ -97,6 +102,8 @@ public class Gun : MonoBehaviour
         yield return new WaitForSeconds(_reloadTime);
 
         Reload();
+
+        _reloadCoroutine = null; // 코루틴이 정상적으로 끝나면 null로 초기화
     }
 
     void Shoot()
@@ -121,7 +128,9 @@ public class Gun : MonoBehaviour
             {
                 Hit(hitInfo);
             }
+
             _currentAmmo--;
+
             Debug.Log($"{_currentAmmo} / {_maxAmmo}");
         }
         anim.SetTrigger("Idle");
@@ -155,4 +164,26 @@ public class Gun : MonoBehaviour
         isReloading = false;
         anim.SetTrigger("Idle");
     }
+
+    // 장전 강제 취소
+    public void CancelReload()
+    {
+        if (isReloading)
+        {
+            Debug.Log("장전 취소됨");
+            StopCoroutine(_reloadCoroutine); // 실행 중인 코루틴 중지
+            isReloading = false; // 장전 상태 false
+            _reloadCoroutine = null; // 장전 코루틴 비우기
+            anim.SetTrigger("Idle"); // 애니메이션 리셋
+        }
+    }
+
+    // 무기 들기
+    public void DrawWeapon()
+    {
+        CancelReload();
+
+        anim.SetTrigger("Draw");
+    }
+
 }

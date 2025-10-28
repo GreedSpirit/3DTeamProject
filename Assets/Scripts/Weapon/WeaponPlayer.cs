@@ -58,21 +58,21 @@ public class WeaponPlayer : MonoBehaviour
         _myRigid = GetComponent<Rigidbody>();
         originalScale = transform.localScale;
 
-        // _weaponList 초기화 및 _myCamera 자식에서 Gun 컴포넌트 찾기
+        // _weaponList 초기화
         _weaponList = new List<Gun>();
-        // GetComponentsInChildren<Gun>(true)로 비활성화된 자식도 모두 찾습니다.
+        // 컴포넌트를 찾는데 비활성화된 자식도 모두 찾기
         foreach (Gun gun in _myCamera.GetComponentsInChildren<Gun>(true))
         {
             _weaponList.Add(gun);
-            gun.gameObject.SetActive(false); // 우선 모든 무기를 비활성화
+            gun.gameObject.SetActive(false); // 모든 무기를 비활성화
         }
 
         // 1번 무기를 기본 무기로 설정
         if (_weaponList.Count > 0)
         {
-            _gunIndex = 0; // 1번 무기 인덱스
+            _gunIndex = 0;
             _curGun = _weaponList[_gunIndex];
-            _curGun.gameObject.SetActive(true); // 1번 무기만 활성화
+            _curGun.gameObject.SetActive(true);
         }
 
         NotifyHealthChanged();
@@ -96,7 +96,7 @@ public class WeaponPlayer : MonoBehaviour
         if (isRolling)
             return;
 
-        Shoot();//총알발사
+        //Shoot();//총알발사
         TryRolling();
         Reloading();
         ChangeWeapon();
@@ -136,22 +136,25 @@ public class WeaponPlayer : MonoBehaviour
     // 무기교체
     void ChangeWeapon()
     {
-        for (int i = 0; i < _weaponKeys.Length; i++) // 번호눌러서 교체
+        for (int i = 0; i < _weaponKeys.Length; i++)
         {
             if (Input.GetKeyDown((_weaponKeys[i])))
             {
-                // 누른 키(i)가 리스트 범위 내에 있고, 해당 무기가 존재하며, 현재 들고 있는 무기가 아닐 때
                 if (i < _weaponList.Count && _weaponList[i] != null && _gunIndex != i)
                 {
-                    // 1. 현재 무기 비활성화
+                    // 장전 상태를 강제 취소
+                    _curGun.CancelReload();
+
+                    // 현재 무기 비활성화
                     _curGun.gameObject.SetActive(false);
 
-                    // 2. 새 무기로 교체
+                    // 새 무기로 교체
                     _curGun = _weaponList[i];
                     _gunIndex = i;
 
-                    // 3. 새 무기 활성화
+                    // 새 무기 활성화, DrawWeapon()메서드 호출
                     _curGun.gameObject.SetActive(true);
+                    _curGun.DrawWeapon();
                     break;
                 }
             }
@@ -290,14 +293,14 @@ public class WeaponPlayer : MonoBehaviour
         _myCamera.transform.localEulerAngles = new Vector3(_curCameraRotationX, 0f, 0f);
 
     }
-    private void Shoot()//무기사용
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            //_curGun.Shoot(); //TryShoot?
-            _curCameraRotationX -= _tmpRecoil;
-        }
-    }
+    //private void Shoot()//무기사용
+    //{
+    //    if (Input.GetMouseButtonDown(0))
+    //    {
+    //        //_curGun.Shoot(); //TryShoot?
+    //        _curCameraRotationX -= _tmpRecoil;
+    //    }
+    //}
 
     private void Reloading()//재장전 
     {
