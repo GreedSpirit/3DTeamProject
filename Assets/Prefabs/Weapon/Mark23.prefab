@@ -609,7 +609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shootAudio: {fileID: 8300000, guid: b2d159f7e00d44d9bbc2d50a0c4fef59, type: 3}
-  _reloadAudio: {fileID: 0}
+  _reloadAudio: {fileID: 8300000, guid: f96461fc4065bfe479cfc3fcd8fff84e, type: 3}
   _maxAmmo: 120
   _currentAmmo: 30
   _clipSize: 30
@@ -626,7 +626,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.3
+  m_Volume: 0.8
   m_Pitch: 1
   Loop: 0
   Mute: 0
