@@ -19,7 +19,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private float _shootRate; // 연사 속도
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
-    private const float _reloadTime = 2.0f; // 재장전 시간
+    private const float _reloadTime = 3.0f; // 재장전 시간
     private bool isReloading = false; // 현재 장전 중인지 확인
 
     private RaycastHit hitInfo;
