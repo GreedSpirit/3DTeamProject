@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 // 몬스터의 현재 상태를 정의하는 ENUM 
 public enum EnemyState
@@ -26,13 +27,18 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float chaseRange = 10f;    //어그로범위
     [SerializeField] private float attackRange = 2f;    //사정거리
     [SerializeField] private float retreatFactor = 1.5f;  // 추적 포기 거리 배율 (1.5배)
-    [SerializeField] private float attackDuration = 1.5f; // 공격 애니메이션 지속 시간 (Invoke용)
+    [SerializeField] private float hitboxActiveTime = 0.3f;
+    [SerializeField] private float attackCooldown = 1.5f;
     // [SerializeField] private int experienceValue = 50; // 경험치 보상(구현시)
+
+    [Header("공격 판정")]
+    [SerializeField] private MonsterHitbox attackHitbox;  //몬스터의 공격 히트박스
 
     //상태 변수
     private EnemyState _currentState = EnemyState.Idle; // 몬스터의 현재 AI 상태
     private Transform _targetPlayer; // 플레이어 Transform
     private bool _isPerformingAttack = false; // 공격 중인지 체크
+    private Coroutine _currentAttackCoroutine; // 현재 공격 코루틴을 저장할 변수
 
     void Awake()
     {
@@ -94,7 +100,7 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    MoveToTarget(_targetPlayer.position);
+                    MoveToTarget();
                 }
                 break;
 
@@ -114,7 +120,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void MoveToTarget(Vector3 destination)
+    private void MoveToTarget()
     {
         // Y축은 고정하고, XZ 평면에서의 방향 벡터만 계산
         Vector3 direction = (_targetPlayer.position - transform.position).normalized;
@@ -143,6 +149,17 @@ public class Enemy : MonoBehaviour
     {
         // (상태 전환 로직) 
         if (_currentState == newState) return;
+
+        if (_currentState == EnemyState.Attack && _currentAttackCoroutine != null)
+        {
+            StopCoroutine(_currentAttackCoroutine);
+            _currentAttackCoroutine = null; // 참조 해제
+            if (attackHitbox != null)
+            {
+                attackHitbox.DisableHitbox();
+            }
+            _isPerformingAttack = false;
+        }
         _currentState = newState;
 
         switch (newState)
@@ -166,16 +183,33 @@ public class Enemy : MonoBehaviour
 
     private void PerformAttack()
     {
-        // (공격 애니메이션 및 대미지 처리 로직)
         _isPerformingAttack = true;
         animator.SetTrigger("attack2");
-        Invoke("ResetAttackFlag", attackDuration);
+
+        _currentAttackCoroutine = StartCoroutine(AttackRoutine());
     }
-    private void ResetAttackFlag()
+    // 몬스터 공격 로직을 처리하는 코루틴
+    private IEnumerator AttackRoutine()
     {
+        // 공격 애니메이션 시작과 동시에 Hitbox 활성화 (혹은 약간의 딜레이 후 활성화)
+        if (attackHitbox != null)
+        {
+            attackHitbox.EnableHitbox();
+        }
+        // 공격 판정 유지 시간
+        yield return new WaitForSeconds(hitboxActiveTime);
+
+        // 공격 판정 비활성화
+        if (attackHitbox != null)
+        {
+            attackHitbox.DisableHitbox();
+        }
+        // 다음 공격까지의 딜레이 (음수방지)
+        float remainingCooldown = Mathf.Max(0f, attackCooldown - hitboxActiveTime);
+        yield return new WaitForSeconds(remainingCooldown);
+        // 공격 플래그 리셋 (다음 공격 가능 상태)
         _isPerformingAttack = false;
     }
-
     private void OnHit(Vector3 hitPoint)
     {
         // (피격 효과 로직) 
@@ -185,6 +219,15 @@ public class Enemy : MonoBehaviour
     public void Die()
     {
         // (사망 처리 로직) 
+        if (_currentAttackCoroutine != null)
+        {
+            StopCoroutine(_currentAttackCoroutine);
+        }
+        if (attackHitbox != null)
+        {
+            attackHitbox.DisableHitbox();
+        }
+        
         SetState(EnemyState.Dead);
         rb.velocity = Vector3.zero;
         rb.isKinematic = true; // 사망 후 물리 효과 중지
