@@ -1,53 +1,59 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    // ÀÌµ¿ WASD, Á¡ÇÁ Space, ´Þ¸®±â Shift, °ø°Ý ÁÂÅ¬¸¯, ÁÜ ¿ìÅ¬¸¯, ÃÑ ±³Ã¼ 1,2,3,4Å° or ÈÙ ¾÷/´Ù¿î
+    // ï¿½Ìµï¿½ WASD, ï¿½ï¿½ï¿½ï¿½ Space, ï¿½Þ¸ï¿½ï¿½ï¿½ Shift, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¬ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½Å¬ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½Ã¼ 1,2,3,4Å° or ï¿½ï¿½ ï¿½ï¿½/ï¿½Ù¿ï¿½
 
-    // ÀÌº¥Æ®
+    // ï¿½Ìºï¿½Æ®
     event Action OnDeath;
-    event Action<int> OnHealthChange;
+    //event Action<int> OnHealthChange;
+    
 
-    // Weapon _curWeapon; //ÇöÀç ¹«±â
-    // List<Weapon> _weaponList; // ¹«±â ¸ñ·Ï
-    // int _weaponIndex; // ÇöÀç ¹«±â ÀÎµ¦½º
-    private KeyCode[] _weaponKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };//¹«±â ±³Ã¼½Ã Å°º¸µå 1 2 3 4 ¹Ì¸®´ã¾ÆµÎ±â
-
-
-    [SerializeField] private LayerMask _groundLayer;//·¹ÀÌÄ³½ºÆ® Ã¼Å©´ë»ó
-    [SerializeField] private float _groundCheckDistance = 100f;//·¹ÀÌÄ³½ºÆ® ±æÀÌ
-
-    [SerializeField] private float _moveSpeed = 50f;//ÀÌµ¿ ¼Óµµ
-    [SerializeField] private float _dashSpeed = 100f;//´ë½¬ ¼Óµµ
-    [SerializeField] private float _JumpForce = 0.5f;//Á¡ÇÁ·Â
-
-    [SerializeField] private float _tmpRecoil = 1.0f;//¹Ýµ¿ Å×½ºÆ®°ª
-
-    [SerializeField] private float _mouseSensitivity = 2.5f;//¸¶¿ì½º ¹Î°¨µµ
+    // Weapon _curWeapon; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // List<Weapon> _weaponList; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    // int _weaponIndex; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+    private KeyCode[] _weaponKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ 1 2 3 4 ï¿½Ì¸ï¿½ï¿½ï¿½ÆµÎ±ï¿½
 
 
-    [SerializeField] private float _cameraRotationLimit = 90;// Ä«¸Þ¶ó »óÇÏÇÑ°è,
-    [SerializeField] private float _baseFOV = 60; // ±âº» ½Ã¾ß °¢
-    [SerializeField] private float _zoomFOV = 30; // ÁÜ ½Ã¾ß °¢
+    [SerializeField] private LayerMask _groundLayer;//ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® Ã¼Å©ï¿½ï¿½ï¿½
+    [SerializeField] private float _groundCheckDistance = 100f;//ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+
+    [SerializeField] private float _moveSpeed = 50f;//ï¿½Ìµï¿½ ï¿½Óµï¿½
+    [SerializeField] private float _dashSpeed = 100f;//ï¿½ë½¬ ï¿½Óµï¿½
+    [SerializeField] private float _JumpForce = 0.5f;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
+    [SerializeField] private float _tmpRecoil = 1.0f;//ï¿½Ýµï¿½ ï¿½×½ï¿½Æ®ï¿½ï¿½
+
+    [SerializeField] private float _mouseSensitivity = 2.5f;//ï¿½ï¿½ï¿½ì½º ï¿½Î°ï¿½ï¿½ï¿½
 
 
-    [SerializeField] private float _rollSpeed = 25f;//±¸¸£±â ¼Óµµ
-    [SerializeField] private float _rollTime = 0.5f;//±¸¸£±â ½Ã°£
-    [SerializeField] private float _rollSize = 0.7f;//±¸¸¦¶§ Å©±â ºñÀ²
+    [SerializeField] private float _cameraRotationLimit = 90;// Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½,
+    [SerializeField] private float _baseFOV = 60; // ï¿½âº» ï¿½Ã¾ï¿½ ï¿½ï¿½
+    [SerializeField] private float _zoomFOV = 30; // ï¿½ï¿½ ï¿½Ã¾ï¿½ ï¿½ï¿½
+
+
+    [SerializeField] private float _rollSpeed = 25f;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½
+    [SerializeField] private float _rollTime = 0.5f;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+    [SerializeField] private float _rollSize = 0.7f;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Vector3 originalScale;
     private bool isRolling = false;
 
     [SerializeField] private Camera _myCamera;
     [SerializeField]
-    public int maxHp// ÃÖ´ëÃ¼·Â
+    public int maxHp// ï¿½Ö´ï¿½Ã¼ï¿½ï¿½
     {
         get; set;
     } = 100;
-    private int _currentHp;//ÇöÀç Ã¼·Â
-    private float _curCameraRotationX = 0;//ÇöÀç Ä«¸Þ¶ó°¢µµ
+    private int _currentHp;//ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½
+    private float _curCameraRotationX = 0;//ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ó°¢µï¿½
     private Rigidbody _myRigid;
+
+    public List<IPlayerHealthObserver> _healthObservers = new List<IPlayerHealthObserver>();
+    public void AddHealthObserver(IPlayerHealthObserver observer) => _healthObservers.Add(observer);
+    public void RemoveHealthObserver(IPlayerHealthObserver observer) => _healthObservers.Remove(observer);
 
     void Start()
     {
@@ -55,6 +61,8 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
         _myRigid = GetComponent<Rigidbody>();
         originalScale = transform.localScale;
+
+        NotifyHealthChanged();
     }
 
     private void OnEnable()
@@ -64,40 +72,51 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if(Time.timeScale == 0)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            return;
+        }
         Debug.DrawRay(transform.position, Vector3.down * _groundCheckDistance, Color.red);
 
         if (isRolling)
             return;
 
-        Shoot();//ÃÑ¾Ë¹ß»ç
+        Shoot();//ï¿½Ñ¾Ë¹ß»ï¿½
         TryRolling();
         Reloading();
     }
     private void FixedUpdate()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         if (isRolling)
             return;
-        Jump();//Á¡ÇÁ
-        Move();//ÀÌµ¿
+        Jump();//ï¿½ï¿½ï¿½ï¿½
+        Move();//ï¿½Ìµï¿½
         
 
     }
     private void LateUpdate()
     {
+        if(Time.timeScale == 0)
+        {
+            return;
+        }
         if (isRolling)
             return;
-        ZoomIn();//ÁÜ
-        PlayerRotate();//Ä«¸Þ¶ó ÁÂ¿ìÀÌµ¿
-        CameraRotate();//Ä«¸Þ¶ó »óÇÏÀÌµ¿
+        ZoomIn();//ï¿½ï¿½
+        PlayerRotate();//Ä«ï¿½Þ¶ï¿½ ï¿½Â¿ï¿½ï¿½Ìµï¿½
+        CameraRotate();//Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½
 
     }
     public void OnDamage(int _dmg)
     {
         _currentHp -= _dmg;
-        OnHealthChange?.Invoke(_currentHp);
+        //OnHealthChange?.Invoke(_currentHp);
+        NotifyHealthChanged();
         if (_currentHp <= 0)
         {
-
             OnDeath?.Invoke();
         }
 
@@ -106,7 +125,7 @@ public class PlayerController : MonoBehaviour
     /*
      * void ChangeWeapon()
     {
-        for (int i = 0; i < _weaponKeys.Length; i++) // ¹øÈ£´­·¯¼­ ±³Ã¼
+        for (int i = 0; i < _weaponKeys.Length; i++) // ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
         {
             if (Input.GetKeyDown((_weaponKeys[i])))
             {
@@ -119,7 +138,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        float scroll = Input.GetAxis("Mouse ScrollWheel");//ÈÙ ¾÷, ÈÙ ´Ù¿îÀ¸·Î ±³Ã¼
+        float scroll = Input.GetAxis("Mouse ScrollWheel");//ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ ï¿½Ù¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
 
         if (scroll != 0)
         {
@@ -145,7 +164,7 @@ public class PlayerController : MonoBehaviour
     }
     */
 
-    private void Move()//ÀÌµ¿
+    private void Move()//ï¿½Ìµï¿½
     {
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveZ = Input.GetAxisRaw("Vertical");
@@ -163,7 +182,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    private void Jump()//Á¡ÇÁ
+    private void Jump()//ï¿½ï¿½ï¿½ï¿½
     {
         if (Input.GetKey(KeyCode.Space) && IsGround())
         {
@@ -171,13 +190,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private bool IsGround()//Áö¸éÃ¼Å©
+    private bool IsGround()//ï¿½ï¿½ï¿½ï¿½Ã¼Å©
     {
         return Physics.Raycast(transform.position, Vector3.down, _groundCheckDistance, _groundLayer);
 
     }
 
-    void TryRolling()//±¸¸£±â Ã¼Å©
+    void TryRolling()//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
     {
         if (Input.GetKeyDown(KeyCode.LeftControl) && !isRolling)
         {
@@ -185,22 +204,22 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Rolling());
         }
     }
-    IEnumerator Rolling() //±¸¸£±â ÀÌµ¿
-    {   // ³ôÀÌ ÁÙÀÌ±â
+    IEnumerator Rolling() //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
+    {   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
         transform.localScale = new Vector3(originalScale.x, originalScale.y * _rollSize, originalScale.z);
         _myRigid.velocity = transform.forward * _rollSpeed;
         isRolling = true;
 
 
-        // rollTime µ¿¾È ±¸¸£±â À¯Áö
+        // rollTime ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         yield return new WaitForSeconds(_rollTime);
 
-        // ³ôÀÌ º¹±¸
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         transform.localScale = originalScale;
         isRolling = false;
     }
 
-    private void ZoomIn()//ÁÜ ±â´É
+    private void ZoomIn()//ï¿½ï¿½ ï¿½ï¿½ï¿½
     {
         if (Input.GetMouseButtonDown(1))
         {
@@ -212,7 +231,7 @@ public class PlayerController : MonoBehaviour
             _myCamera.fieldOfView = _baseFOV;
         }
     }
-    private void PlayerRotate()//È­¸é ÁÂ¿ìÈ¸Àü
+    private void PlayerRotate()//È­ï¿½ï¿½ ï¿½Â¿ï¿½È¸ï¿½ï¿½
     {
 
         float rotationY = Input.GetAxisRaw("Mouse X");
@@ -221,7 +240,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void CameraRotate()//È­¸é »óÇÏÈ¸Àü
+    private void CameraRotate()//È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È¸ï¿½ï¿½
     {
         float rotationX = Input.GetAxisRaw("Mouse Y");
         float cameraRotaionX = rotationX * _mouseSensitivity;
@@ -230,7 +249,7 @@ public class PlayerController : MonoBehaviour
         _myCamera.transform.localEulerAngles = new Vector3(_curCameraRotationX, 0f, 0f);
 
     }
-    private void Shoot()//¹«±â»ç¿ë
+    private void Shoot()//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -239,11 +258,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Reloading()//ÀçÀåÀü 
+    private void Reloading()//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
             //_curWeapon.Reload();
+        }
+    }
+
+    private void NotifyHealthChanged()
+    {
+        foreach (IPlayerHealthObserver observer in _healthObservers)
+        {
+            observer?.OnPlayerHealthChanged(_currentHp, maxHp);
         }
     }
 }
