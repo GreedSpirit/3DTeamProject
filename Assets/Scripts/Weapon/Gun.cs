@@ -3,22 +3,37 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    [SerializeField] private Camera _mainCamera; // 메인 카메라
-    [SerializeField] private AudioClip _audio; // 효과음
+    private Camera _mainCamera; // 메인 카메라
 
-    [SerializeField] private int _maxAmmo = 120; // 최대 탄약 수
-    [SerializeField] private int _currentAmmo = 30; // 현재 탄약 수
-    [SerializeField] private const int _clipSize = 30; // 탄창 크기
+    private Animator anim; // 애니메이션
+
+    [SerializeField] private AudioClip _shootAudio; // 효과음
+    [SerializeField] private AudioClip _reloadAudio;
+    private AudioSource _audioSource; // 효과음 재생
+
+    [SerializeField] private int _maxAmmo; // 최대 탄약 수
+    [SerializeField] private int _currentAmmo; // 현재 탄약 수
+    [SerializeField] private int _clipSize; // 탄창 크기
 
     //[SerializeField] private float _damage; // 총 데미지
-    [SerializeField] private float _shootRate = 5f; // 연사 속도
-    private float _shootTimer = 0f; // 탄 발사 쿨다운 타이머
+    [SerializeField] private float _shootRate; // 연사 속도
+    private float _shootTimer; // 탄 발사 쿨다운 타이머
 
-    [SerializeField] private float _reloadTime = 3.0f; // 재장전 시간
+    private const float _reloadTime = 2.0f; // 재장전 시간
     private bool isReloading = false; // 현재 장전 중인지 확인
 
     private RaycastHit hitInfo;
 
+    void Start()
+    {
+        if (_mainCamera == null)
+        {
+            _mainCamera = Camera.main;
+        }
+
+        anim = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
+    }
     void Update()
     {
         if (_shootTimer > 0)
@@ -68,8 +83,18 @@ public class Gun : MonoBehaviour
             isReloading = false;
             yield break;
         }
+
         Debug.Log("장전 시작");
+
+        anim.SetTrigger("Reload");
+
+        if (_audioSource != null && _reloadAudio != null)
+        {
+            _audioSource.PlayOneShot(_reloadAudio);
+        }
+
         yield return new WaitForSeconds(_reloadTime);
+
         Reload();
     }
 
@@ -81,6 +106,13 @@ public class Gun : MonoBehaviour
         }
         else
         {
+            anim.SetTrigger("Shoot");
+
+            if (_audioSource != null && _shootAudio != null)
+            {
+                _audioSource.PlayOneShot(_shootAudio);
+            }
+
             Vector3 origin = _mainCamera.transform.position; // 시작점
             Vector3 direction = _mainCamera.transform.forward; // 방향
 
@@ -88,10 +120,10 @@ public class Gun : MonoBehaviour
             {
                 Hit(hitInfo);
             }
-
             _currentAmmo--;
             Debug.Log($"{_currentAmmo} / {_maxAmmo}");
         }
+        anim.SetTrigger("Idle");
     }
 
     void Hit(RaycastHit hitInfo)
@@ -120,5 +152,6 @@ public class Gun : MonoBehaviour
         Debug.Log($"{_currentAmmo} / {_maxAmmo}");
 
         isReloading = false;
+        anim.SetTrigger("Idle");
     }
 }
