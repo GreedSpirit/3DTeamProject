@@ -14,6 +14,9 @@ public class UISoundSetting : MonoBehaviour
         _masterSlider.onValueChanged.AddListener(SetMasterVolume);
         _bgmSlider.onValueChanged.AddListener(SetBGMVolume);
         _sfxSlider.onValueChanged.AddListener(SetSFXVolume);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void Start()

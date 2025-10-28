@@ -9,4 +9,9 @@ public class GameStartBtn : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }
+
+    public void LoadVersusScene()
+    {
+        LoadingUIManager.Instance.LoadScene("InGameUI");
+    }
 }

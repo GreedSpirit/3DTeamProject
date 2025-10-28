@@ -5601,6 +5601,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5666160995362778470, guid: c3d9eaee691f9df42ba5b0ea12e9c1e2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5666160995362778470, guid: c3d9eaee691f9df42ba5b0ea12e9c1e2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 1415927702}
@@ -5609,11 +5613,19 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5666160995362778470, guid: c3d9eaee691f9df42ba5b0ea12e9c1e2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5666160995362778470, guid: c3d9eaee691f9df42ba5b0ea12e9c1e2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: TestGameStart
+      value: LoadVersusScene
       objectReference: {fileID: 0}
     - target: {fileID: 5666160995362778470, guid: c3d9eaee691f9df42ba5b0ea12e9c1e2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GameStartBtn, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5666160995362778470, guid: c3d9eaee691f9df42ba5b0ea12e9c1e2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
       value: GameStartBtn, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5666160995362778470, guid: c3d9eaee691f9df42ba5b0ea12e9c1e2, type: 3}
