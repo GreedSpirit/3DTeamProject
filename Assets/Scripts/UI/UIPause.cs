@@ -23,12 +23,13 @@ public class UIPause : MonoBehaviour
 
     public void Resume()
     {
-        escBlackPanel.SetActive(false);
         Time.timeScale = 1;
+        escBlackPanel.SetActive(false);
     }
 
     public void ReturnMainMenu()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
 }
