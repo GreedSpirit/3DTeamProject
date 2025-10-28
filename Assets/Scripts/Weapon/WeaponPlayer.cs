@@ -10,7 +10,7 @@ public class WeaponPlayer : MonoBehaviour
     event Action OnDeath;
     //event Action<int> OnHealthChange;
 
-    Gun _curGun; //현재 무기
+    private Gun _curGun; //현재 무기
     List<Gun> _weaponList; // 무기 목록
     int _gunIndex; // 현재 무기 인덱스
 
@@ -58,6 +58,23 @@ public class WeaponPlayer : MonoBehaviour
         _myRigid = GetComponent<Rigidbody>();
         originalScale = transform.localScale;
 
+        // _weaponList 초기화 및 _myCamera 자식에서 Gun 컴포넌트 찾기
+        _weaponList = new List<Gun>();
+        // GetComponentsInChildren<Gun>(true)로 비활성화된 자식도 모두 찾습니다.
+        foreach (Gun gun in _myCamera.GetComponentsInChildren<Gun>(true))
+        {
+            _weaponList.Add(gun);
+            gun.gameObject.SetActive(false); // 우선 모든 무기를 비활성화
+        }
+
+        // 1번 무기를 기본 무기로 설정
+        if (_weaponList.Count > 0)
+        {
+            _gunIndex = 0; // 1번 무기 인덱스
+            _curGun = _weaponList[_gunIndex];
+            _curGun.gameObject.SetActive(true); // 1번 무기만 활성화
+        }
+
         NotifyHealthChanged();
     }
 
@@ -82,6 +99,7 @@ public class WeaponPlayer : MonoBehaviour
         Shoot();//총알발사
         TryRolling();
         Reloading();
+        ChangeWeapon();
         //Interact();
     }
     private void FixedUpdate()
@@ -122,38 +140,45 @@ public class WeaponPlayer : MonoBehaviour
         {
             if (Input.GetKeyDown((_weaponKeys[i])))
             {
-                if (i < _weaponList.Count && _weaponList[i] != null)
+                // 누른 키(i)가 리스트 범위 내에 있고, 해당 무기가 존재하며, 현재 들고 있는 무기가 아닐 때
+                if (i < _weaponList.Count && _weaponList[i] != null && _gunIndex != i)
                 {
+                    // 1. 현재 무기 비활성화
+                    _curGun.gameObject.SetActive(false);
+
+                    // 2. 새 무기로 교체
                     _curGun = _weaponList[i];
                     _gunIndex = i;
+
+                    // 3. 새 무기 활성화
+                    _curGun.gameObject.SetActive(true);
                     break;
                 }
             }
         }
 
-        float scroll = Input.GetAxis("Mouse ScrollWheel");//휠 업, 휠 다운으로 교체
+        //float scroll = Input.GetAxis("Mouse ScrollWheel");//휠 업, 휠 다운으로 교체
 
-        if (scroll != 0)
-        {
-            if (scroll > 0f)
-            {
-                _gunIndex--;
-                if (_gunIndex < 0)
-                {
-                    _gunIndex = _weaponList.Count - 1;
-                }
-            }
-            else if (scroll < 0f)
-            {
-                _gunIndex++;
-                if (_gunIndex >= _weaponList.Count)
-                {
-                    _gunIndex = 0;
-                }
-            }
-            _curGun = _weaponList[_gunIndex];
-        }
-
+        //if (scroll != 0)
+        //{
+        //    if (scroll > 0f)
+        //    {
+        //        _gunIndex--;
+        //        if (_gunIndex < 0)
+        //        {
+        //            _gunIndex = _weaponList.Count - 1;
+        //        }
+        //    }
+        //    else if (scroll < 0f)
+        //    {
+        //        _gunIndex++;
+        //        if (_gunIndex >= _weaponList.Count)
+        //        {
+        //            _gunIndex = 0;
+        //        }
+        //    }
+        //    _curGun = _weaponList[_gunIndex];
+        //}
     }
 
 

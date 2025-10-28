@@ -34,6 +34,7 @@ public class Gun : MonoBehaviour
         anim = GetComponent<Animator>();
         _audioSource = GetComponent<AudioSource>();
     }
+
     void Update()
     {
         if (_shootTimer > 0)
