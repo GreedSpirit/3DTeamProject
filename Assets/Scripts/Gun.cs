@@ -5,6 +5,7 @@ public class Gun : MonoBehaviour
 {
     [SerializeField] private Camera _mainCamera; // 메인 카메라
     [SerializeField] private AudioClip _audio; // 효과음
+    private Animator anim; // 애니메이션
 
     [SerializeField] private int _maxAmmo = 120; // 최대 탄약 수
     [SerializeField] private int _currentAmmo = 30; // 현재 탄약 수
@@ -19,6 +20,10 @@ public class Gun : MonoBehaviour
 
     private RaycastHit hitInfo;
 
+    void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
     void Update()
     {
         if (_shootTimer > 0)
@@ -68,13 +73,19 @@ public class Gun : MonoBehaviour
             isReloading = false;
             yield break;
         }
+
         Debug.Log("장전 시작");
+
+        anim.SetTrigger("Reload");
+
         yield return new WaitForSeconds(_reloadTime);
+
         Reload();
     }
 
     void Shoot()
     {
+        anim.SetTrigger("Shoot");
         if (!isReloading && _currentAmmo <= 0 && _maxAmmo <= 0)
         {
             Debug.Log("남은 탄약이 없습니다.");
@@ -91,6 +102,7 @@ public class Gun : MonoBehaviour
 
             _currentAmmo--;
             Debug.Log($"{_currentAmmo} / {_maxAmmo}");
+            anim.SetTrigger("Idle");
         }
     }
 
@@ -120,5 +132,6 @@ public class Gun : MonoBehaviour
         Debug.Log($"{_currentAmmo} / {_maxAmmo}");
 
         isReloading = false;
+        anim.SetTrigger("Idle");
     }
 }

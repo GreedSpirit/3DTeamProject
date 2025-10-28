@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         _myRigid = GetComponent<Rigidbody>();
         originalScale = transform.localScale;
@@ -234,7 +235,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             //Gun.Shoot(); //TryShoot?
-            _curCameraRotationX -= _tmpRecoil;
+           // _curCameraRotationX -= _tmpRecoil;
         }
     }
 
