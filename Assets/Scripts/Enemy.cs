@@ -8,7 +8,8 @@ public enum EnemyState
     //Patrol,      // 순찰 상태
     Chase,       // 플레이어 추적 상태
     Attack,      // 공격 상태
-    Dead         // 사망 상태
+    Dead,        // 사망 상태
+    Stun         // 경직 상태
 }
 public class Enemy : MonoBehaviour
 {
@@ -28,9 +29,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float chaseRange = 10f;    //어그로범위
     [SerializeField] private float attackRange = 2f;    //사정거리
     [SerializeField] private float retreatFactor = 1.5f;  // 추적 포기 거리 배율 (1.5배)
-    [SerializeField] private float hitboxActiveTime = 0.3f;
+    [SerializeField] private float hitboxActiveTime = 1f;
     [SerializeField] private float attackCooldown = 1.5f;
-    [SerializeField] private float attackDelayTime = 0.2f; //공격 애니메이션 시작 후 히트박스 활성화까지의 딜레이
+    [SerializeField] private float attackDelayTime = 1f; //공격 애니메이션 시작 후 히트박스 활성화까지의 딜레이
+    [SerializeField] private float stunDuration = 0.5f; // 경직 시간 추가
     // [SerializeField] private int experienceValue = 50; // 경험치 보상(구현시)
 
     [Header("공격 판정")]
@@ -41,6 +43,7 @@ public class Enemy : MonoBehaviour
     private Transform _targetPlayer; // 플레이어 Transform
     private bool _isPerformingAttack = false; // 공격 중인지 체크
     private Coroutine _currentAttackCoroutine; // 현재 공격 코루틴을 저장할 변수
+    private Coroutine _currentStunCoroutine; // 경직 코루틴 변수 추가
     public EnemyState CurrentState => _currentState;
 
     void Awake()
@@ -70,14 +73,30 @@ public class Enemy : MonoBehaviour
         {
             Die();
         }
-        else if (_currentState == EnemyState.Idle) // 대기 상태에서 공격받을 시 추적 ( 어그로 )
+        else
         {
-            SetState(EnemyState.Chase);
+            // 경직 로직 실행: 피격 시 항상 Stun 상태로 전환
+            // 기존 경직 코루틴 중지 및 리셋
+            if (_currentStunCoroutine != null)
+            {
+                StopCoroutine(_currentStunCoroutine);
+                _currentStunCoroutine = null;
+            }
+
+            SetState(EnemyState.Stun);
+
+            // 경직 시간 코루틴 시작
+            _currentStunCoroutine = StartCoroutine(StunRoutine());
+
+            // Idle 상태에서 피격당했다면, Stun이 끝난 후 Chase 상태로 가게 StunRoutine에 맡김
         }
     }
 
     private void UpdateAI()
     {
+        // Stun 상태일 때 AI 로직을 무시하고 멈춤
+        if (_currentState == EnemyState.Stun) return; 
+
         float distanceToPlayer = Vector3.Distance(transform.position, _targetPlayer.position);
 
         switch (_currentState)
@@ -153,7 +172,14 @@ public class Enemy : MonoBehaviour
         // (상태 전환 로직) 
         if (_currentState == newState) return;
 
-        if (_currentState == EnemyState.Attack && _currentAttackCoroutine != null)
+        // Stun 상태 종료 로직 (다른 상태로 전환될 때 Stun 코루틴 중지)
+        if (_currentState == EnemyState.Stun && _currentStunCoroutine != null)
+        {
+            StopCoroutine(_currentStunCoroutine);
+            _currentStunCoroutine = null;
+        }
+
+            if (_currentState == EnemyState.Attack && _currentAttackCoroutine != null)
         {
             StopCoroutine(_currentAttackCoroutine);
             _currentAttackCoroutine = null; // 참조 해제
@@ -181,6 +207,11 @@ public class Enemy : MonoBehaviour
                 rb.velocity = Vector3.zero;
                 animator.SetBool("run", false);
                 break;
+            case EnemyState.Stun: // 경직 상태 진입 시 이동 정지
+                rb.velocity = Vector3.zero;
+                animator.SetBool("run", false);
+                break;
+
         }
     }
 
@@ -226,19 +257,17 @@ public class Enemy : MonoBehaviour
         // (피격 효과 로직) 
         animator.SetTrigger("take_damage");
     }
-    
+    private IEnumerator StunRoutine()
+    {
+
+        yield return new WaitForSeconds(stunDuration);
+
+        // 경직 시간 종료 후 추적 상태로 복귀
+        SetState(EnemyState.Chase);
+    }
     public void Die()
     {
-        // (사망 처리 로직) 
-        if (_currentAttackCoroutine != null)
-        {
-            StopCoroutine(_currentAttackCoroutine);
-        }
-        if (attackHitbox != null)
-        {
-            attackHitbox.DisableHitbox();
-        }
-        
+       
         SetState(EnemyState.Dead);
         rb.velocity = Vector3.zero;
         rb.isKinematic = true; // 사망 후 물리 효과 중지
