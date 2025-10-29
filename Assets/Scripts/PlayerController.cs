@@ -80,6 +80,23 @@ public class PlayerController : MonoBehaviour
         _myRigid = GetComponent<Rigidbody>();
         _originalScale = transform.localScale;
 
+        // _weaponList 초기화
+        _weaponList = new List<Gun>();
+        // 컴포넌트를 찾는데 비활성화된 자식도 모두 찾기
+        foreach (Gun gun in _myCamera.GetComponentsInChildren<Gun>(true))
+        {
+            _weaponList.Add(gun);
+            gun.gameObject.SetActive(false); // 모든 무기를 비활성화
+        }
+
+        // 1번 무기를 기본 무기로 설정
+        if (_weaponList.Count > 0)
+        {
+            _gunIndex = 0;
+            _curGun = _weaponList[_gunIndex];
+            _curGun.gameObject.SetActive(true);
+        }
+
         NotifyHealthChanged();
         audioSources = GetComponents<AudioSource>();
     }
@@ -114,6 +131,7 @@ public class PlayerController : MonoBehaviour
         TryRolling();
         Reloading();
         Interact();
+        ChangeWeapon();
     }
     private void FixedUpdate()
     {
@@ -177,42 +195,52 @@ public class PlayerController : MonoBehaviour
     // 무기교체
     void ChangeWeapon()
     {
-        for (int i = 0; i < _weaponKeys.Length; i++) // 번호눌러서 교체
+        for (int i = 0; i < _weaponKeys.Length; i++)
         {
             if (Input.GetKeyDown((_weaponKeys[i])))
             {
-                if (i < _weaponList.Count && _weaponList[i] != null)
+                if (i < _weaponList.Count && _weaponList[i] != null && _gunIndex != i)
                 {
+                    // 장전 상태를 강제 취소
+                    _curGun.CancelReload();
+
+                    // 현재 무기 비활성화
+                    _curGun.gameObject.SetActive(false);
+
+                    // 새 무기로 교체
                     _curGun = _weaponList[i];
                     _gunIndex = i;
+
+                    // 새 무기 활성화, DrawWeapon()메서드 호출
+                    _curGun.gameObject.SetActive(true);
+                    _curGun.DrawWeapon();
                     break;
                 }
             }
         }
 
-        float scroll = Input.GetAxis("Mouse ScrollWheel");//휠 업, 휠 다운으로 교체
+        //float scroll = Input.GetAxis("Mouse ScrollWheel");//휠 업, 휠 다운으로 교체
 
-        if (scroll != 0)
-        {
-            if (scroll > 0f)
-            {
-                _gunIndex--;
-                if (_gunIndex < 0)
-                {
-                    _gunIndex = _weaponList.Count - 1;
-                }
-            }
-            else if (scroll < 0f)
-            {
-                _gunIndex++;
-                if (_gunIndex >= _weaponList.Count)
-                {
-                    _gunIndex = 0;
-                }
-            }
-            _curGun = _weaponList[_gunIndex];
-        }
-
+        //if (scroll != 0)
+        //{
+        //    if (scroll > 0f)
+        //    {
+        //        _gunIndex--;
+        //        if (_gunIndex < 0)
+        //        {
+        //            _gunIndex = _weaponList.Count - 1;
+        //        }
+        //    }
+        //    else if (scroll < 0f)
+        //    {
+        //        _gunIndex++;
+        //        if (_gunIndex >= _weaponList.Count)
+        //        {
+        //            _gunIndex = 0;
+        //        }
+        //    }
+        //    _curGun = _weaponList[_gunIndex];
+        //}
     }
 
 
@@ -229,7 +257,7 @@ public class PlayerController : MonoBehaviour
             _isDashing = true;
             _myRigid.velocity = new Vector3(MoveDir.x * _dashSpeed, _myRigid.velocity.y, MoveDir.z * _dashSpeed);
         }
-        else if(Input.GetKey(KeyCode.W) ||
+        else if (Input.GetKey(KeyCode.W) ||
                 Input.GetKey(KeyCode.A) ||
                 Input.GetKey(KeyCode.S) ||
                  Input.GetKey(KeyCode.D))
@@ -347,7 +375,7 @@ public class PlayerController : MonoBehaviour
         float rotationX = Input.GetAxisRaw("Mouse Y");
         float cameraRotaionX = rotationX * _mouseSensitivity;
         _curCameraRotationX -= cameraRotaionX;
-        _curCameraRotationX = Math.Clamp    (_curCameraRotationX, -_cameraRotationLimit, _cameraRotationLimit);
+        _curCameraRotationX = Math.Clamp(_curCameraRotationX, -_cameraRotationLimit, _cameraRotationLimit);
         _myCamera.transform.localEulerAngles = new Vector3(_curCameraRotationX, 0f, 0f);
 
     }
