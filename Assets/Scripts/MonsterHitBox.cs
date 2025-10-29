@@ -4,7 +4,7 @@ using UnityEngine;
 public class MonsterHitbox : MonoBehaviour
 {
     [SerializeField] private int damageAmount = 10;
-
+    private Enemy _enemyParent; // Enemy 참조를 위한 변수
     // 물리 엔진의 오차로 인한 짧은 시간 내의 중복 피해를 방지
     private HashSet<Collider> damagedTargets = new HashSet<Collider>();
 
@@ -12,6 +12,7 @@ public class MonsterHitbox : MonoBehaviour
 
     void Awake()
     {
+        _enemyParent = GetComponentInParent<Enemy>(); // 몬스터 스크립트 가져오기
         hitCollider = GetComponent<Collider>();
         hitCollider.enabled = false;     // 몬스터가 공격하지 않을 때는 충돌 판정을 비활성화
     }
@@ -31,10 +32,13 @@ public class MonsterHitbox : MonoBehaviour
         // 혹시 남아있을 수 있는 기록 정리
         damagedTargets.Clear();
     }
-
     private void OnTriggerEnter(Collider other)
     {
-        
+        // 몬스터가 'Attack' 상태가 아니면 피해를 줄 수 없음
+        if (_enemyParent == null || _enemyParent.CurrentState != EnemyState.Attack)
+        {
+            return;
+        }
         // 이미 피해를 준 대상이라면, 추가적인 피해를 주지 않고 함수를 종료 (중복 피해 방지 체크)
         if (damagedTargets.Contains(other))
         {

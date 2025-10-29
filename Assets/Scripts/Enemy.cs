@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     public float MaxHealth => _maxHealth; // 읽기 전용 속성
     public float CurrentHealth { get; private set; } // 외부는 읽기, 내부는 쓰기 가능
 
+   
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float rotationSpeed = 5f;  // 회전 속도
     [SerializeField] private float chaseRange = 10f;    //어그로범위
@@ -29,6 +30,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float retreatFactor = 1.5f;  // 추적 포기 거리 배율 (1.5배)
     [SerializeField] private float hitboxActiveTime = 0.3f;
     [SerializeField] private float attackCooldown = 1.5f;
+    [SerializeField] private float attackDelayTime = 0.2f; //공격 애니메이션 시작 후 히트박스 활성화까지의 딜레이
     // [SerializeField] private int experienceValue = 50; // 경험치 보상(구현시)
 
     [Header("공격 판정")]
@@ -39,6 +41,7 @@ public class Enemy : MonoBehaviour
     private Transform _targetPlayer; // 플레이어 Transform
     private bool _isPerformingAttack = false; // 공격 중인지 체크
     private Coroutine _currentAttackCoroutine; // 현재 공격 코루틴을 저장할 변수
+    public EnemyState CurrentState => _currentState;
 
     void Awake()
     {
@@ -185,17 +188,21 @@ public class Enemy : MonoBehaviour
     {
         _isPerformingAttack = true;
         animator.SetTrigger("attack2");
-
         _currentAttackCoroutine = StartCoroutine(AttackRoutine());
     }
     // 몬스터 공격 로직을 처리하는 코루틴
     private IEnumerator AttackRoutine()
     {
-        // 공격 애니메이션 시작과 동시에 Hitbox 활성화 (혹은 약간의 딜레이 후 활성화)
+        // 공격 애니메이션이 시작된 후, 히트박스를 켤 때까지 딜레이
+        // 이 시간은 직접 애니메이션을 보고 몬스터의 팔이 플레이어에게 닿기 직전으로 설정
+        yield return new WaitForSeconds(attackDelayTime);
+
+        // 공격 판정 활성화
         if (attackHitbox != null)
         {
             attackHitbox.EnableHitbox();
         }
+
         // 공격 판정 유지 시간
         yield return new WaitForSeconds(hitboxActiveTime);
 
@@ -204,18 +211,22 @@ public class Enemy : MonoBehaviour
         {
             attackHitbox.DisableHitbox();
         }
-        // 다음 공격까지의 딜레이 (음수방지)
-        float remainingCooldown = Mathf.Max(0f, attackCooldown - hitboxActiveTime);
+
+        // 다음 공격까지의 쿨다운 대기
+        float remainingCooldown = Mathf.Max(0f, attackCooldown - attackDelayTime - hitboxActiveTime);
         yield return new WaitForSeconds(remainingCooldown);
+
         // 공격 플래그 리셋 (다음 공격 가능 상태)
         _isPerformingAttack = false;
+        _currentAttackCoroutine = null; // 코루틴 참조 해제
     }
+    
     private void OnHit(Vector3 hitPoint)
     {
         // (피격 효과 로직) 
         animator.SetTrigger("take_damage");
     }
-
+    
     public void Die()
     {
         // (사망 처리 로직) 
