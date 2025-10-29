@@ -5,7 +5,7 @@ using UnityEngine;
 public class HealKit : MonoBehaviour, IInteractable
 {
     public bool _isInteract { get; set; } = true;
-    [SerializeField] private int _healValue { get; set; } = 10;
+    [SerializeField] private int _healValue= 10;
     public bool Use()
     {
         if (_isInteract)
