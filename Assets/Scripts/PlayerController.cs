@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     // 이동 WASD, 점프 Space, 달리기 Shift, 공격 좌클릭, 줌 우클릭, 총 교체 1,2,3,4키 or 휠 업/다운
     // 이벤트
-    event Action OnDeath;
+    public event Action OnDeath;
     //event Action<int> OnHealthChange;
 
     Gun _curGun; //현재 무기
@@ -189,8 +189,6 @@ public class PlayerController : MonoBehaviour
                 return;
             }
         }
-        OnDeath?.Invoke();
-
     }
     // 무기교체
     void ChangeWeapon()
