@@ -2,21 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-interface IInteractable
+public interface IInteractable
 {
-    bool isInteract{ get; set;}
+    bool _isInteract { get; set; }
+    public virtual int GetValue()
+    {
+        return 0;
+    }
     bool Use();
 }
 public class BulletBox : MonoBehaviour, IInteractable
 {
-    public bool isInteract { get; set; } = true;
+    public bool _isInteract { get; set; } = true;
     public bool Use()
     {
-        if (isInteract)
+        if (_isInteract)
         {
-            Transform child = transform.GetChild(1); 
+            Transform child = transform.GetChild(1);
             child.gameObject.SetActive(false);
-            isInteract = false;
+            _isInteract = false;
             return true;
         }
         else

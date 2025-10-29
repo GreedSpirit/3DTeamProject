@@ -332,7 +332,7 @@ public class PlayerController : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction * _interactDistance, Color.yellow, 1f);
         if (Physics.Raycast(ray, out hit, _interactDistance) && hit.collider.TryGetComponent<IInteractable>(out IInteractable inter))
         {
-            if (inter.isInteract)
+            if (inter._isInteract)
             {
                 Debug.Log("상호작용 가능");
                 if (Input.GetKeyDown(KeyCode.F))
