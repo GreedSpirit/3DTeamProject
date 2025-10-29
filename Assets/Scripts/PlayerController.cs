@@ -271,6 +271,7 @@ public class PlayerController : MonoBehaviour
             _isWalking = false;
             _isDashing = false;
 
+            _myRigid.velocity = new Vector3(MoveDir.x * _moveSpeed * 0.9f, _myRigid.velocity.y, MoveDir.z * _moveSpeed * 0.9f);
         }
 
     }
