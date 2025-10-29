@@ -7,9 +7,10 @@ public class Gun : MonoBehaviour
 
     private Animator anim; // 애니메이션
 
-    [SerializeField] private AudioClip _shootAudio; // 효과음
-    [SerializeField] private AudioClip _reloadAudio;
     private AudioSource _audioSource; // 효과음 재생
+    [SerializeField] private AudioClip _shootAudio; // 발사 효과음
+    [SerializeField] private AudioClip _reloadAudio; // 장전 효과음
+    [SerializeField] private AudioClip _refillAmmo; // 탄약 보급 효과음
 
     [SerializeField] private int _maxAmmo; // 최대 탄약 수
     [SerializeField] private int _currentAmmo; // 현재 탄약 수
@@ -17,6 +18,7 @@ public class Gun : MonoBehaviour
 
     [SerializeField] private float _damage; // 총 데미지
     [SerializeField] private float _shootRate; // 연사 속도
+    [SerializeField] private float _recoil; // 반동
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
     private const float _reloadTime = 3.0f; // 재장전 시간
@@ -27,7 +29,7 @@ public class Gun : MonoBehaviour
     private RaycastHit hitInfo;
 
 
-    void Start()
+    private void Start()
     {
         if (_mainCamera == null)
         {
@@ -35,41 +37,109 @@ public class Gun : MonoBehaviour
         }
 
         anim = GetComponent<Animator>();
+
         _audioSource = GetComponent<AudioSource>();
     }
 
-    void Update()
+    private void Update()
     {
         if (_shootTimer > 0)
         {
             _shootTimer -= Time.deltaTime;
         }
 
-        if (!isReloading)
-        {
-            // 마우스 좌클릭을 눌렀다면 Shoot
-            if (Input.GetMouseButton(0) && _shootTimer <= 0f && _currentAmmo > 0)
-            {
-                // 쿨다운 설정
-                _shootTimer = 1f / _shootRate;
-                Shoot();
-            }
-
-            // R키를 눌렀다면 Reload
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                _reloadCoroutine = StartCoroutine(ReloadCoroutine());
-            }
-        }
-
         // 장전 중이 아닌데, 현재 탄약이 0이고, 남은 탄약이 있다면
         if (!isReloading && _currentAmmo <= 0 && _maxAmmo > 0)
         {
-            _reloadCoroutine = StartCoroutine(ReloadCoroutine());
+            StartReload();
         }
     }
 
-    IEnumerator ReloadCoroutine()
+    public float Shoot()
+    {
+        // 발사 불가능 조건 체크
+        if (isReloading || _currentAmmo <= 0 || _shootTimer > 0)
+        {
+            // 탄약이 없고 예비 탄약도 없다면
+            if (_currentAmmo <= 0 && _maxAmmo <= 0)
+            {
+                Debug.Log("남은 탄약이 없습니다.");
+            }
+            return 0f; // 발사 실패
+        }
+
+        // 쿨다운 설정
+        _shootTimer = 1f / _shootRate;
+
+        anim.SetTrigger("Shoot");
+
+        if (_audioSource != null && _shootAudio != null)
+        {
+            _audioSource.PlayOneShot(_shootAudio);
+        }
+
+        Vector3 origin = _mainCamera.transform.position; // 시작점
+        Vector3 direction = _mainCamera.transform.forward; // 방향
+
+        if (Physics.Raycast(origin, direction, out RaycastHit hitInfo))
+        {
+            Hit(hitInfo);
+        }
+
+        _currentAmmo--;
+
+        Debug.Log($"{_currentAmmo} / {_maxAmmo} ");
+        anim.SetTrigger("Idle"); // 애니메이션 전환
+
+        // 발사에 성공, 반동 값 반환
+        return _recoil;
+    }
+
+    private void Hit(RaycastHit hitInfo)
+    {
+        // 맞은 오브젝트의 Tag가 Enemy일 경우
+        if (hitInfo.collider.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Enemy Hit");
+
+            // 몬스터의 Enemy 컴포넌트를 가져옵니다.
+            Enemy enemy = hitInfo.collider.GetComponent<Enemy>();
+
+            if (enemy != null)
+            {
+                // 몬스터의 TakeDamage 함수를 호출하고,
+                // 이 총의 데미지(_damage)와 충돌 지점(hitInfo.point)을 전달합니다.
+                enemy.TakeDamage(_damage, hitInfo.point);
+            }
+        }
+    }
+
+    public void StartReload()
+    {
+        if (isReloading)
+        {
+            Debug.Log("이미 장전 중입니다.");
+            return;
+        }
+
+        // 탄창이 꽉 찼을 경우
+        if (_currentAmmo == _clipSize)
+        {
+            Debug.Log("이미 탄창이 꽉 찼습니다.");
+            return;
+        }
+
+        // 남은 탄약이 없을 경우
+        if (_maxAmmo <= 0)
+        {
+            Debug.Log("남은 탄약이 없습니다.");
+            return;
+        }
+
+        _reloadCoroutine = StartCoroutine(ReloadCoroutine());
+    }
+
+    private IEnumerator ReloadCoroutine()
     {
         isReloading = true;
 
@@ -106,56 +176,7 @@ public class Gun : MonoBehaviour
         _reloadCoroutine = null; // 코루틴이 정상적으로 끝나면 null로 초기화
     }
 
-    void Shoot()
-    {
-        if (!isReloading && _currentAmmo <= 0 && _maxAmmo <= 0)
-        {
-            Debug.Log("남은 탄약이 없습니다.");
-        }
-        else
-        {
-            anim.SetTrigger("Shoot");
-
-            if (_audioSource != null && _shootAudio != null)
-            {
-                _audioSource.PlayOneShot(_shootAudio);
-            }
-
-            Vector3 origin = _mainCamera.transform.position; // 시작점
-            Vector3 direction = _mainCamera.transform.forward; // 방향
-
-            if (Physics.Raycast(origin, direction, out RaycastHit hitInfo))
-            {
-                Hit(hitInfo);
-            }
-
-            _currentAmmo--;
-
-            Debug.Log($"{_currentAmmo} / {_maxAmmo}");
-        }
-        anim.SetTrigger("Idle");
-    }
-
-    void Hit(RaycastHit hitInfo)
-    {
-        // 맞은 오브젝트의 Tag가 Enemy일 경우
-        if (hitInfo.collider.gameObject.CompareTag("Enemy"))
-        {
-            Debug.Log("Enemy Hit");
-
-            // 몬스터의 Enemy 컴포넌트를 가져옵니다.
-            Enemy enemy = hitInfo.collider.GetComponent<Enemy>();
-
-            if (enemy != null)
-            {
-                // 몬스터의 TakeDamage 함수를 호출하고,
-                // 이 총의 데미지(_damage)와 충돌 지점(hitInfo.point)을 전달합니다.
-                enemy.TakeDamage(_damage, hitInfo.point);
-            }
-        }
-    }
-
-    void Reload()
+    private void Reload()
     {
         // 필요한 탄약 계산
         int needAmmo = _clipSize - _currentAmmo;
@@ -196,4 +217,9 @@ public class Gun : MonoBehaviour
         anim.SetTrigger("Draw");
     }
 
+    public void RefillAmmo()
+    {
+        _maxAmmo += 30; // 임시로 30 추가
+        _audioSource.PlayOneShot(_refillAmmo);
+    }
 }
