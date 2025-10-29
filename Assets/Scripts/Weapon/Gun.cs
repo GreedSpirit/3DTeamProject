@@ -17,10 +17,10 @@ public class Gun : MonoBehaviour
     [SerializeField] private int _clipSize; // 탄창 크기
 
     [SerializeField] private float _damage; // 총 데미지
+    [SerializeField] private float _reloadTime; // 재장전 시간
     [SerializeField] private float _shootRate; // 연사 속도
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
-    private const float _reloadTime = 3.0f; // 재장전 시간
 
     private bool isReloading = false; // 현재 장전 중인지 확인
 
