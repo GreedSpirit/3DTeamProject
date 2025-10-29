@@ -96,6 +96,7 @@ MonoBehaviour:
   _maxAmmo: 90
   _currentAmmo: 30
   _clipSize: 30
+  _damage: 0
   _shootRate: 8
 --- !u!82 &4177201129906686191
 AudioSource:

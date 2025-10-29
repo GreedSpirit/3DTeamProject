@@ -15,7 +15,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private int _currentAmmo; // 현재 탄약 수
     [SerializeField] private int _clipSize; // 탄창 크기
 
-    //[SerializeField] private float _damage; // 총 데미지
+    [SerializeField] private float _damage; // 총 데미지
     [SerializeField] private float _shootRate; // 연사 속도
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
@@ -142,6 +142,16 @@ public class Gun : MonoBehaviour
         if (hitInfo.collider.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("Enemy Hit");
+
+            // 몬스터의 Enemy 컴포넌트를 가져옵니다.
+            Enemy enemy = hitInfo.collider.GetComponent<Enemy>();
+
+            if (enemy != null)
+            {
+                // 몬스터의 TakeDamage 함수를 호출하고,
+                // 이 총의 데미지(_damage)와 충돌 지점(hitInfo.point)을 전달합니다.
+                enemy.TakeDamage(_damage, hitInfo.point);
+            }
         }
     }
 
