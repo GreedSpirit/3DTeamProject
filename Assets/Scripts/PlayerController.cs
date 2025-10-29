@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _dashSpeed = 20f;//대쉬 속도
     [SerializeField] private float _JumpForce = 0.5f;//점프력
 
-    [SerializeField] private float _tmpRecoil = 3.0f;//반동 테스트값
+    [SerializeField] private float _tmpRecoil = 1.0f;//반동 테스트값
 
     [Header("카메라 제어")]
     [SerializeField] private float _mouseSensitivity = 2.5f;//마우스 민감도
@@ -346,6 +346,8 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
+
+
         }
     }
     private void ZoomIn()//줌 기능
@@ -378,7 +380,6 @@ public class PlayerController : MonoBehaviour
         _myCamera.transform.localEulerAngles = new Vector3(_curCameraRotationX, 0f, 0f);
 
     }
-
     public void Recoil(float recoil) // 무기 반동
     {
         _curCameraRotationX -= recoil;
@@ -407,7 +408,6 @@ public class PlayerController : MonoBehaviour
             _curGun.StartReload();
         }
     }
-
     private void NotifyHealthChanged()
     {
         foreach (IPlayerHealthObserver observer in _healthObservers)
