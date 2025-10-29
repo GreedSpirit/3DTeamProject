@@ -18,7 +18,6 @@ public class Gun : MonoBehaviour
 
     [SerializeField] private float _damage; // 총 데미지
     [SerializeField] private float _shootRate; // 연사 속도
-    [SerializeField] private float _recoil; // 반동
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
     private const float _reloadTime = 3.0f; // 재장전 시간
@@ -55,24 +54,32 @@ public class Gun : MonoBehaviour
         }
     }
 
-    public float Shoot()
+    public bool Shoot()
     {
         // 발사 불가능 조건 체크
-        if (isReloading || _currentAmmo <= 0 || _shootTimer > 0)
+        if (isReloading || _shootTimer > 0)
         {
-            // 탄약이 없고 예비 탄약도 없다면
-            if (_currentAmmo <= 0 && _maxAmmo <= 0)
+            return false;
+        }
+
+        // 탄약 부족 체크
+        if (_currentAmmo <= 0)
+        {
+            // 남은 예비 탄약이 없을 경우
+            if (_maxAmmo <= 0)
             {
                 Debug.Log("남은 탄약이 없습니다.");
             }
-            return 0f; // 발사 실패
+            return false;
         }
 
         // 쿨다운 설정
         _shootTimer = 1f / _shootRate;
 
+        // 애니메이션 설정
         anim.SetTrigger("Shoot");
 
+        // 효과음 설정
         if (_audioSource != null && _shootAudio != null)
         {
             _audioSource.PlayOneShot(_shootAudio);
@@ -89,10 +96,10 @@ public class Gun : MonoBehaviour
         _currentAmmo--;
 
         Debug.Log($"{_currentAmmo} / {_maxAmmo} ");
-        anim.SetTrigger("Idle"); // 애니메이션 전환
+        anim.SetTrigger("Idle");
 
-        // 발사에 성공, 반동 값 반환
-        return _recoil;
+        // 발사 성공 true 반환
+        return true;
     }
 
     private void Hit(RaycastHit hitInfo)

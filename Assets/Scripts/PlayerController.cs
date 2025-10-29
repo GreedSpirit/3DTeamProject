@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _dashSpeed = 20f;//대쉬 속도
     [SerializeField] private float _JumpForce = 0.5f;//점프력
 
-    [SerializeField] private float _tmpRecoil = 1.0f;//반동 테스트값
+    [SerializeField] private float _recoil = 3.0f;//반동 테스트값
 
     [Header("카메라 제어")]
     [SerializeField] private float _mouseSensitivity = 2.5f;//마우스 민감도
@@ -380,23 +380,19 @@ public class PlayerController : MonoBehaviour
         _myCamera.transform.localEulerAngles = new Vector3(_curCameraRotationX, 0f, 0f);
 
     }
-    public void Recoil(float recoil) // 무기 반동
-    {
-        _curCameraRotationX -= recoil;
-    }
 
-    private void Shoot()//무기사용
+    private void Shoot() // 무기사용
     {
         if (Input.GetMouseButton(0))
         {
-            // ⭐️ Gun의 Shoot() 메서드를 호출하고 반동 값을 받음
-            float recoilAmount = _curGun.Shoot();
+            // Gun의 Shoot() 메서드를 호출하고 발사 성공 여부(bool)를 받음
+            bool isShoot = _curGun.Shoot();
 
-            // ⭐️ 반환된 반동 값이 0보다 클 때 (즉, 발사가 실제로 성공했을 때)만 반동을 적용
-            if (recoilAmount > 0)
+            // 발사가 실제로 성공했을 때만 반동을 적용
+            if (isShoot)
             {
-                // _tmpRecoil 필드 대신, Gun에서 실제 발생한 반동 값을 사용
-                Recoil(recoilAmount);
+                // 반동주기
+                _curCameraRotationX -= _recoil;
             }
         }
     }
