@@ -136,15 +136,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc07274cddc1dc46a89c988a2a6c296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shootAudio: {fileID: 8300000, guid: 2203773368e4340d98c114f55c2dd7fd, type: 3}
+  _shootAudio: {fileID: 8300000, guid: 10b3379630a551540bcd90ccd4e63a72, type: 3}
   _reloadAudio: {fileID: 8300000, guid: 21ff5de8c1c8f9e4cb8fbf316e2c98c4, type: 3}
-  _refillAmmo: {fileID: 8300000, guid: 9158afb6966d445db9caf1dccf7acbcc, type: 3}
+  _refillAmmo: {fileID: 8300000, guid: 2187dc09e73a5894d87befafa87c6fa5, type: 3}
   _maxAmmo: 30
   _currentAmmo: 10
   _clipSize: 10
   _damage: 5
   _reloadTime: 2
   _shootRate: 2
+  _recoilForce: 20
+  _aimingFov: 10
 --- !u!95 &343264010848246109
 Animator:
   serializedVersion: 5
