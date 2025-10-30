@@ -20,6 +20,9 @@ public class Gun : MonoBehaviour
     [SerializeField] private float _damage; // 총 데미지
     [SerializeField] private float _reloadTime; // 재장전 시간
     [SerializeField] private float _shootRate; // 연사 속도
+    [SerializeField] private float _recoilForce = 20f; //반동
+    [SerializeField] private int _aimingFov = 10; //조준정도
+
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
 
@@ -60,6 +63,15 @@ public class Gun : MonoBehaviour
         {
             StartReload();
         }
+    }
+
+    public int GetFov()
+    {
+        return _aimingFov;
+    }
+    public float GetRecoilForec()
+    {
+        return _recoilForce;
     }
 
     public bool Shoot()
