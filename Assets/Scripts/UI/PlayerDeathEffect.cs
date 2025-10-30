@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -14,6 +12,7 @@ public class PlayerDeathEffect : MonoBehaviour
 
     void Awake()
     {
+        _player = FindAnyObjectByType<PlayerController>();
         _player.OnDeath += Fade;
     }
 
@@ -39,7 +38,7 @@ public class PlayerDeathEffect : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        LoadingUIManager.Instance.LoadScene("GameOverUI");
+        SceneManager.LoadScene("GameOverUI");
     }
 
 }
