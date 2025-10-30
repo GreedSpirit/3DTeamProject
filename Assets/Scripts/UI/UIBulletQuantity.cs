@@ -6,16 +6,24 @@ using UnityEngine;
 public class UIBulletQuantity : MonoBehaviour, IBulletConsumObserver
 {
     [SerializeField] private TextMeshProUGUI _bulletQuantity;
-    [SerializeField] private Gun _gun;
+    [SerializeField] private List<Gun> _weaponList;
 
     private void Awake()
     {
-        _gun.AddBulletObserver(this);
+        _weaponList = new List<Gun>(FindObjectsOfType<Gun>());
+
+        foreach (var weapon in _weaponList)
+        {
+            weapon.AddBulletObserver(this);
+        }
     }
 
     private void OnDestroy()
     {
-        _gun.RemoveBulletObserver(this);        
+        foreach (var weapon in _weaponList)
+        {
+            weapon.RemoveBulletObserver(this);
+        }        
     }
     public void OnBulletChanged(int curBullet, int maxBullet)
     {
