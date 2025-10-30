@@ -8,6 +8,7 @@ public class UIPlayerHealth : MonoBehaviour, IPlayerHealthObserver
 
     private void Awake()
     {
+        _player = FindAnyObjectByType<PlayerController>();
         _player.AddHealthObserver(this);
     }
 
