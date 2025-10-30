@@ -56,9 +56,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -4074473252190429812, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4074473252190429812, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 207255160290522387, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 207255160290522387, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 612318929138632651, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 612318929138632651, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
       propertyPath: m_Name
       value: Mark23
+      objectReference: {fileID: 0}
+    - target: {fileID: 6610904938715150233, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6610904938715150233, guid: fdb7d71886fa51145ad84bd3a28d9e57, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
