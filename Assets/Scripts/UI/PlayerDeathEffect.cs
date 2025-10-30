@@ -39,7 +39,7 @@ public class PlayerDeathEffect : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        LoadingUIManager.Instance.LoadScene("GameOverUI");
+        SceneManager.LoadScene("GameOverUI");
     }
 
 }
