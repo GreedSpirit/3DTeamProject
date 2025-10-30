@@ -1,30 +1,30 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    private Camera _mainCamera; // ¸ŞÀÎ Ä«¸Ş¶ó
+    private Camera _mainCamera; // ë©”ì¸ ì¹´ë©”ë¼
 
-    private Animator anim; // ¾Ö´Ï¸ŞÀÌ¼Ç
+    private Animator anim; // ì• ë‹ˆë©”ì´ì…˜
 
-    private AudioSource _audioSource; // È¿°úÀ½ Àç»ı
-    [SerializeField] private AudioClip _shootAudio; // ¹ß»ç È¿°úÀ½
-    [SerializeField] private AudioClip _reloadAudio; // ÀåÀü È¿°úÀ½
-    [SerializeField] private AudioClip _refillAmmo; // Åº¾à º¸±Ş È¿°úÀ½
+    private AudioSource _audioSource; // íš¨ê³¼ìŒ ì¬ìƒ
+    [SerializeField] private AudioClip _shootAudio; // ë°œì‚¬ íš¨ê³¼ìŒ
+    [SerializeField] private AudioClip _reloadAudio; // ì¥ì „ íš¨ê³¼ìŒ
+    [SerializeField] private AudioClip _refillAmmo; // íƒ„ì•½ ë³´ê¸‰ íš¨ê³¼ìŒ
 
-    [SerializeField] private int _maxAmmo; // ÃÖ´ë Åº¾à ¼ö
-    [SerializeField] private int _currentAmmo; // ÇöÀç Åº¾à ¼ö
-    [SerializeField] private int _clipSize; // ÅºÃ¢ Å©±â
+    [SerializeField] private int _maxAmmo; // ìµœëŒ€ íƒ„ì•½ ìˆ˜
+    [SerializeField] private int _currentAmmo; // í˜„ì¬ íƒ„ì•½ ìˆ˜
+    [SerializeField] private int _clipSize; // íƒ„ì°½ í¬ê¸°
 
-    [SerializeField] private float _damage; // ÃÑ µ¥¹ÌÁö
-    [SerializeField] private float _reloadTime; // ÀçÀåÀü ½Ã°£
-    [SerializeField] private float _shootRate; // ¿¬»ç ¼Óµµ
-    private float _shootTimer; // Åº ¹ß»ç Äğ´Ù¿î Å¸ÀÌ¸Ó
+    [SerializeField] private float _damage; // ì´ ë°ë¯¸ì§€
+    [SerializeField] private float _reloadTime; // ì¬ì¥ì „ ì‹œê°„
+    [SerializeField] private float _shootRate; // ì—°ì‚¬ ì†ë„
+    private float _shootTimer; // íƒ„ ë°œì‚¬ ì¿¨ë‹¤ìš´ íƒ€ì´ë¨¸
 
 
-    private bool isReloading = false; // ÇöÀç ÀåÀü ÁßÀÎÁö È®ÀÎ
+    private bool isReloading = false; // í˜„ì¬ ì¥ì „ ì¤‘ì¸ì§€ í™•ì¸
 
-    public Coroutine _reloadCoroutine; // ÇöÀç ½ÇÇà ÁßÀÎ ÀçÀåÀü ÄÚ·çÆ¾
+    public Coroutine _reloadCoroutine; // í˜„ì¬ ì‹¤í–‰ ì¤‘ì¸ ì¬ì¥ì „ ì½”ë£¨í‹´
     private RaycastHit hitInfo;
 
 
@@ -47,7 +47,7 @@ public class Gun : MonoBehaviour
             _shootTimer -= Time.deltaTime;
         }
 
-        // ÀåÀü ÁßÀÌ ¾Æ´Ñµ¥, ÇöÀç Åº¾àÀÌ 0ÀÌ°í, ³²Àº Åº¾àÀÌ ÀÖ´Ù¸é
+        // ì¥ì „ ì¤‘ì´ ì•„ë‹Œë°, í˜„ì¬ íƒ„ì•½ì´ 0ì´ê³ , ë‚¨ì€ íƒ„ì•½ì´ ìˆë‹¤ë©´
         if (!isReloading && _currentAmmo <= 0 && _maxAmmo > 0)
         {
             StartReload();
@@ -56,37 +56,37 @@ public class Gun : MonoBehaviour
 
     public bool Shoot()
     {
-        // ¹ß»ç ºÒ°¡´É Á¶°Ç Ã¼Å©
+        // ë°œì‚¬ ë¶ˆê°€ëŠ¥ ì¡°ê±´ ì²´í¬
         if (isReloading || _shootTimer > 0)
         {
             return false;
         }
 
-        // Åº¾à ºÎÁ· Ã¼Å©
+        // íƒ„ì•½ ë¶€ì¡± ì²´í¬
         if (_currentAmmo <= 0)
         {
-            // ³²Àº ¿¹ºñ Åº¾àÀÌ ¾øÀ» °æ¿ì
+            // ë‚¨ì€ ì˜ˆë¹„ íƒ„ì•½ì´ ì—†ì„ ê²½ìš°
             if (_maxAmmo <= 0)
             {
-                Debug.Log("³²Àº Åº¾àÀÌ ¾ø½À´Ï´Ù.");
+                Debug.Log("ë‚¨ì€ íƒ„ì•½ì´ ì—†ìŠµë‹ˆë‹¤.");
             }
             return false;
         }
 
-        // Äğ´Ù¿î ¼³Á¤
+        // ì¿¨ë‹¤ìš´ ì„¤ì •
         _shootTimer = 1f / _shootRate;
 
-        // ¾Ö´Ï¸ŞÀÌ¼Ç ¼³Á¤
+        // ì• ë‹ˆë©”ì´ì…˜ ì„¤ì •
         anim.SetTrigger("Shoot");
 
-        // È¿°úÀ½ ¼³Á¤
+        // íš¨ê³¼ìŒ ì„¤ì •
         if (_audioSource != null && _shootAudio != null)
         {
             _audioSource.PlayOneShot(_shootAudio);
         }
 
-        Vector3 origin = _mainCamera.transform.position; // ½ÃÀÛÁ¡
-        Vector3 direction = _mainCamera.transform.forward; // ¹æÇâ
+        Vector3 origin = _mainCamera.transform.position; // ì‹œì‘ì 
+        Vector3 direction = _mainCamera.transform.forward; // ë°©í–¥
 
         if (Physics.Raycast(origin, direction, out RaycastHit hitInfo))
         {
@@ -98,24 +98,24 @@ public class Gun : MonoBehaviour
         Debug.Log($"{_currentAmmo} / {_maxAmmo} ");
         anim.SetTrigger("Idle");
 
-        // ¹ß»ç ¼º°ø true ¹İÈ¯
+        // ë°œì‚¬ ì„±ê³µ true ë°˜í™˜
         return true;
     }
 
     private void Hit(RaycastHit hitInfo)
     {
-        // ¸ÂÀº ¿ÀºêÁ§Æ®ÀÇ Tag°¡ EnemyÀÏ °æ¿ì
+        // ë§ì€ ì˜¤ë¸Œì íŠ¸ì˜ Tagê°€ Enemyì¼ ê²½ìš°
         if (hitInfo.collider.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("Enemy Hit");
 
-            // ¸ó½ºÅÍÀÇ Enemy ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿É´Ï´Ù.
+            // ëª¬ìŠ¤í„°ì˜ Enemy ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
             Enemy enemy = hitInfo.collider.GetComponent<Enemy>();
 
             if (enemy != null)
             {
-                // ¸ó½ºÅÍÀÇ TakeDamage ÇÔ¼ö¸¦ È£ÃâÇÏ°í,
-                // ÀÌ ÃÑÀÇ µ¥¹ÌÁö(_damage)¿Í Ãæµ¹ ÁöÁ¡(hitInfo.point)À» Àü´ŞÇÕ´Ï´Ù.
+                // ëª¬ìŠ¤í„°ì˜ TakeDamage í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ê³ ,
+                // ì´ ì´ì˜ ë°ë¯¸ì§€(_damage)ì™€ ì¶©ëŒ ì§€ì (hitInfo.point)ì„ ì „ë‹¬í•©ë‹ˆë‹¤.
                 enemy.TakeDamage(_damage, hitInfo.point);
             }
         }
@@ -125,21 +125,21 @@ public class Gun : MonoBehaviour
     {
         if (isReloading)
         {
-            Debug.Log("ÀÌ¹Ì ÀåÀü ÁßÀÔ´Ï´Ù.");
+            Debug.Log("ì´ë¯¸ ì¥ì „ ì¤‘ì…ë‹ˆë‹¤.");
             return;
         }
 
-        // ÅºÃ¢ÀÌ ²Ë Ã¡À» °æ¿ì
+        // íƒ„ì°½ì´ ê½‰ ì°¼ì„ ê²½ìš°
         if (_currentAmmo == _clipSize)
         {
-            Debug.Log("ÀÌ¹Ì ÅºÃ¢ÀÌ ²Ë Ã¡½À´Ï´Ù.");
+            Debug.Log("ì´ë¯¸ íƒ„ì°½ì´ ê½‰ ì°¼ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ³²Àº Åº¾àÀÌ ¾øÀ» °æ¿ì
+        // ë‚¨ì€ íƒ„ì•½ì´ ì—†ì„ ê²½ìš°
         if (_maxAmmo <= 0)
         {
-            Debug.Log("³²Àº Åº¾àÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log("ë‚¨ì€ íƒ„ì•½ì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -150,24 +150,24 @@ public class Gun : MonoBehaviour
     {
         isReloading = true;
 
-        // ÅºÃ¢ÀÌ ²Ë Ã¡À» °æ¿ì
+        // íƒ„ì°½ì´ ê½‰ ì°¼ì„ ê²½ìš°
         if (_currentAmmo == _clipSize)
         {
-            Debug.Log("ÀÌ¹Ì ÅºÃ¢ÀÌ ²Ë Ã¡½À´Ï´Ù.");
+            Debug.Log("ì´ë¯¸ íƒ„ì°½ì´ ê½‰ ì°¼ìŠµë‹ˆë‹¤.");
             isReloading = false;
             _reloadCoroutine = null;
             yield break;
         }
-        // ³²Àº Åº¾àÀÌ ¾øÀ» °æ¿ì
+        // ë‚¨ì€ íƒ„ì•½ì´ ì—†ì„ ê²½ìš°
         if (_maxAmmo <= 0)
         {
-            Debug.Log("³²Àº Åº¾àÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log("ë‚¨ì€ íƒ„ì•½ì´ ì—†ìŠµë‹ˆë‹¤.");
             isReloading = false;
             _reloadCoroutine = null;
             yield break;
         }
 
-        Debug.Log("ÀåÀü ½ÃÀÛ");
+        Debug.Log("ì¥ì „ ì‹œì‘");
 
         anim.SetTrigger("Reload");
 
@@ -180,43 +180,43 @@ public class Gun : MonoBehaviour
 
         Reload();
 
-        _reloadCoroutine = null; // ÄÚ·çÆ¾ÀÌ Á¤»óÀûÀ¸·Î ³¡³ª¸é null·Î ÃÊ±âÈ­
+        _reloadCoroutine = null; // ì½”ë£¨í‹´ì´ ì •ìƒì ìœ¼ë¡œ ëë‚˜ë©´ nullë¡œ ì´ˆê¸°í™”
     }
 
     private void Reload()
     {
-        // ÇÊ¿äÇÑ Åº¾à °è»ê
+        // í•„ìš”í•œ íƒ„ì•½ ê³„ì‚°
         int needAmmo = _clipSize - _currentAmmo;
 
-        // ³²Àº Åº¾àÀÌ ºÎÁ·ÇÒ °æ¿ì °¡Á®¿Ã ½ÇÁ¦ Åº¾à ¼ö Á¦ÇÑ
-        // needAmmo = 10, _maxAmmo = 5ÀÏ °æ¿ì 5¸¸Å­¸¸ ÀåÀüÇÑ´Ù.
+        // ë‚¨ì€ íƒ„ì•½ì´ ë¶€ì¡±í•  ê²½ìš° ê°€ì ¸ì˜¬ ì‹¤ì œ íƒ„ì•½ ìˆ˜ ì œí•œ
+        // needAmmo = 10, _maxAmmo = 5ì¼ ê²½ìš° 5ë§Œí¼ë§Œ ì¥ì „í•œë‹¤.
         int ReloadAmmo = Mathf.Min(needAmmo, _maxAmmo);
 
-        // Åº¾à ÀåÀü Àû¿ë
+        // íƒ„ì•½ ì¥ì „ ì ìš©
         _maxAmmo -= ReloadAmmo;
         _currentAmmo += ReloadAmmo;
 
-        Debug.Log("ÀåÀü ³¡");
+        Debug.Log("ì¥ì „ ë");
         Debug.Log($"{_currentAmmo} / {_maxAmmo}");
 
         isReloading = false;
         anim.SetTrigger("Idle");
     }
 
-    // ÀåÀü °­Á¦ Ãë¼Ò
+    // ì¥ì „ ê°•ì œ ì·¨ì†Œ
     public void CancelReload()
     {
         if (isReloading)
         {
-            Debug.Log("ÀåÀü Ãë¼ÒµÊ");
-            StopCoroutine(_reloadCoroutine); // ½ÇÇà ÁßÀÎ ÄÚ·çÆ¾ ÁßÁö
-            isReloading = false; // ÀåÀü »óÅÂ false
-            _reloadCoroutine = null; // ÀåÀü ÄÚ·çÆ¾ ºñ¿ì±â
-            anim.SetTrigger("Idle"); // ¾Ö´Ï¸ŞÀÌ¼Ç ¸®¼Â
+            Debug.Log("ì¥ì „ ì·¨ì†Œë¨");
+            StopCoroutine(_reloadCoroutine); // ì‹¤í–‰ ì¤‘ì¸ ì½”ë£¨í‹´ ì¤‘ì§€
+            isReloading = false; // ì¥ì „ ìƒíƒœ false
+            _reloadCoroutine = null; // ì¥ì „ ì½”ë£¨í‹´ ë¹„ìš°ê¸°
+            anim.SetTrigger("Idle"); // ì• ë‹ˆë©”ì´ì…˜ ë¦¬ì…‹
         }
     }
 
-    // ¹«±â µé±â
+    // ë¬´ê¸° ë“¤ê¸°
     public void DrawWeapon()
     {
         CancelReload();
@@ -226,7 +226,7 @@ public class Gun : MonoBehaviour
 
     public void RefillAmmo()
     {
-        _maxAmmo += 30; // ÀÓ½Ã·Î 30 Ãß°¡
+        _maxAmmo += 30; // ì„ì‹œë¡œ 30 ì¶”ê°€
         _audioSource.PlayOneShot(_refillAmmo);
     }
 }
