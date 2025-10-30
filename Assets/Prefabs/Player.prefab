@@ -221,18 +221,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   _groundCheckDistance: 1.1
+  _interactDistance: 2
   _moveSpeed: 10
   _dashSpeed: 20
   _JumpForce: 0.5
-  _tmpRecoil: 1
   _mouseSensitivity: 2.5
+  _myCamera: {fileID: 2206018758940335226}
   _cameraRotationLimit: 90
   _baseFOV: 60
-  _zoomFOV: 30
   _rollSpeed: 15
   _rollTime: 0.5
   _rollSize: 0.7
-  _myCamera: {fileID: 2206018758940335226}
+  _moveSoundInterval: 0.5
+  _dashSoundInterval: 0.2
+  _deathAnimeMotionTime: 1
 --- !u!54 &8533171413331111151
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -270,7 +272,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 6f77143439d0efe4da5fc33ebca146cc, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 8339b334c9fc77540acf36d6088aecd0, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -366,7 +368,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 2590b48ed913bd44d84c90db5e093f8e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 439ae83fdc4fa804ba6b17aa644496bb, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -462,7 +464,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: e2947269e9bfe25469b8dc9454c29f18, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 657cff2807049d149ba432d3f62dac1d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
