@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
@@ -27,6 +28,11 @@ public class Gun : MonoBehaviour
     public Coroutine _reloadCoroutine; // 현재 실행 중인 재장전 코루틴
     private RaycastHit hitInfo;
 
+    public List<IBulletConsumObserver> _healthObservers = new List<IBulletConsumObserver>();
+    public void AddBulletObserver(IBulletConsumObserver observer) => _healthObservers.Add(observer);
+    public void RemoveBulletObserver(IBulletConsumObserver observer) => _healthObservers.Remove(observer);
+
+
 
     private void Start()
     {
@@ -38,6 +44,8 @@ public class Gun : MonoBehaviour
         anim = GetComponent<Animator>();
 
         _audioSource = GetComponent<AudioSource>();
+
+        NotifyBulletChanged();
     }
 
     private void Update()
@@ -94,6 +102,7 @@ public class Gun : MonoBehaviour
         }
 
         _currentAmmo--;
+        NotifyBulletChanged();
 
         Debug.Log($"{_currentAmmo} / {_maxAmmo} ");
         anim.SetTrigger("Idle");
@@ -195,6 +204,7 @@ public class Gun : MonoBehaviour
         // 탄약 장전 적용
         _maxAmmo -= ReloadAmmo;
         _currentAmmo += ReloadAmmo;
+        NotifyBulletChanged();
 
         Debug.Log("장전 끝");
         Debug.Log($"{_currentAmmo} / {_maxAmmo}");
@@ -220,6 +230,7 @@ public class Gun : MonoBehaviour
     public void DrawWeapon()
     {
         CancelReload();
+        NotifyBulletChanged();
 
         anim.SetTrigger("Draw");
     }
@@ -228,5 +239,13 @@ public class Gun : MonoBehaviour
     {
         _maxAmmo += 30; // 임시로 30 추가
         _audioSource.PlayOneShot(_refillAmmo);
+    }
+
+    private void NotifyBulletChanged()
+    {
+        foreach (IBulletConsumObserver observer in _healthObservers)
+        {
+            observer?.OnBulletChanged(_currentAmmo, _maxAmmo);
+        }
     }
 }
