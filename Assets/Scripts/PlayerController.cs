@@ -26,14 +26,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _dashSpeed = 20f;//대쉬 속도
     [SerializeField] private float _JumpForce = 0.5f;//점프력
 
-    [SerializeField] private float _recoil = 3.0f;//반동 테스트값
 
     [Header("카메라 제어")]
     [SerializeField] private float _mouseSensitivity = 2.5f;//마우스 민감도
     [SerializeField] private Camera _myCamera;
     [SerializeField] private float _cameraRotationLimit = 90;// 카메라 상하한계,
     [SerializeField] private float _baseFOV = 60; // 기본 시야 각
-    [SerializeField] private float _zoomFOV = 30; // 줌 시야 각
 
     [Header("구르기")]
     [SerializeField] private float _rollSpeed = 25f;//구르기 속도
@@ -362,7 +360,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            _myCamera.fieldOfView = _zoomFOV;
+            _myCamera.fieldOfView = _curGun.GetFov();
         }
         else if (Input.GetMouseButtonUp(1))
         {
@@ -400,8 +398,7 @@ public class PlayerController : MonoBehaviour
             // 발사가 실제로 성공했을 때만 반동을 적용
             if (isShoot)
             {
-                // 반동주기
-                _curCameraRotationX -=  _recoil;
+                _curCameraRotationX -= _curGun.GetRecoilForec();
             }
         }
     }
