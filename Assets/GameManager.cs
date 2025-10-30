@@ -17,9 +17,9 @@ public class GameManager : MonoBehaviour
     public float waveTime = 120f; // 한 웨이브 지속 시간 (2분)
 
     // UI
-    public Text score;
-    public Text stageText;
-    public Text stateText;
+    public TMPro.TextMeshProUGUI score;
+    public TMPro.TextMeshProUGUI stageText;
+    public TMPro.TextMeshProUGUI stateText;
 
     // 싱글톤
     public static GameManager Instance;
@@ -61,8 +61,20 @@ public class GameManager : MonoBehaviour
 
             case GameState.Playing:
                 timer += Time.deltaTime;
-                if (timer >= surviveTime)
-                    ClearStage();
+                if (timer >= waveTime)
+                {
+                    timer = 0f;
+                    currentWave++;
+
+                    if(currentWave > maxWave)
+                    {
+                        ClearGame();
+                    }
+                    else
+                    {
+                        StartNewWave();
+                    }
+                }
                 break;
 
             case GameState.Clear:
@@ -78,11 +90,31 @@ public class GameManager : MonoBehaviour
         Debug.Log("게임 시작");
         currentState = GameState.Playing;
         timer = 0f;
+        currentWave = 1;
         stateText.text = "Survive!";
-        stageText.text = "Stage : 1";
+        stageText.text = $"Stage : {currentWave}";
 
         if (spawner != null)
-            spawner.StartSpawn();
+            spawner.StartWave(currentWave);
+    }
+
+    void StartNewWave()
+    {
+        Debug.Log($"웨이브 {currentWave} 시작");
+        stageText.text = $"Stage : {currentWave}";
+
+        if (spawner != null)
+            spawner.StartWave(currentWave); // 스포너에게 새 웨이브 시작 알림
+    }
+
+    public void ClearGame()
+    {
+        Debug.Log("모든 웨이브 클리어! 게임 승리!");
+        currentState = GameState.Clear;
+        stateText.text = "Victory!\nPress R to Restart";
+
+        if (spawner != null)
+            spawner.StopSpawn();
     }
 
     public void EndGame()
@@ -95,15 +127,6 @@ public class GameManager : MonoBehaviour
             spawner.StopSpawn();
     }
 
-    public void ClearStage()
-    {
-        Debug.Log("스테이지 클리어!");
-        currentState = GameState.Clear;
-        stateText.text = "Stage Clear!\nPress R to Restart";
-
-        if (spawner != null)
-            spawner.StopSpawn();
-    }
 
     public void Restart()
     {
