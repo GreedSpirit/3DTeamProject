@@ -2,19 +2,21 @@ using UnityEngine;
 
 public class UIPause : MonoBehaviour
 {
-    [SerializeField] private GameObject escBlackPanel;
+    [SerializeField] private GameObject _escBlackPanel;
+    [SerializeField] private GameObject _crossHair;
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (escBlackPanel.activeSelf)
+            if (_escBlackPanel.activeSelf)
             {
                 Resume();
             }
             else
             {
-                escBlackPanel.SetActive(true);
+                _escBlackPanel.SetActive(true);
+                _crossHair.SetActive(false);
                 Time.timeScale = 0;
             }
         }
@@ -23,7 +25,10 @@ public class UIPause : MonoBehaviour
     public void Resume()
     {
         Time.timeScale = 1;
-        escBlackPanel.SetActive(false);
+        _escBlackPanel.SetActive(false);
+        _crossHair.SetActive(true);
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void ReturnMainMenu()

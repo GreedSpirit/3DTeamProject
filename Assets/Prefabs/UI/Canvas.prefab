@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7340251072394011691}
   - component: {fileID: 5377628411429088833}
+  - component: {fileID: 7444454975627588103}
   m_Layer: 5
   m_Name: BulletQuantityUI
   m_TagString: Untagged
@@ -51,6 +52,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bulletQuantity: {fileID: 7597687955365842721}
+  _gun: {fileID: 0}
+--- !u!114 &7444454975627588103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1415175532322005539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1655cd394dbaa75439db0a2a62b58c00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bulletQuantity: {fileID: 7597687955365842721}
+  _gun: {fileID: 0}
 --- !u!1 &1630660087213993049
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,7 +352,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea40ce871dadf7a4083c353dd37e51b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  escBlackPanel: {fileID: 1630660087213993049}
+  _escBlackPanel: {fileID: 1630660087213993049}
+  _crossHair: {fileID: 8973344738283624669}
 --- !u!1 &3430350504462892658
 GameObject:
   m_ObjectHideFlags: 0
@@ -1083,7 +1100,7 @@ GameObject:
   - component: {fileID: 3601632734205523441}
   - component: {fileID: 2670477002614181463}
   m_Layer: 5
-  m_Name: Image
+  m_Name: CrossHair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1098,7 +1115,7 @@ RectTransform:
   m_GameObject: {fileID: 8973344738283624669}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4694800855367860050}
