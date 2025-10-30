@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class GameEndUI : MonoBehaviour
 {
-    // Update is called once per frame
     void Update()
     {
         ReturnTitle();
@@ -16,7 +15,7 @@ public class GameEndUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(1);
+            LoadingUIManager.Instance.LoadScene("InGameUI");
         }
     }
     
@@ -24,7 +23,7 @@ public class GameEndUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            SceneManager.LoadScene(0);
+            LoadingUIManager.Instance.LoadScene("Title");
         }
     }
 }

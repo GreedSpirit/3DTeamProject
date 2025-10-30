@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     // 이동 WASD, 점프 Space, 달리기 Shift, 공격 좌클릭, 줌 우클릭, 총 교체 1,2,3,4키 or 휠 업/다운
     // 이벤트
-    event Action OnDeath;
+    public event Action OnDeath;
     //event Action<int> OnHealthChange;
 
     Gun _curGun; //현재 무기
@@ -175,6 +175,11 @@ public class PlayerController : MonoBehaviour
             audioSources[2].Play();
         }
     }
+    void RecoverHp(int recoverAmount)
+    {
+        _currentHp += recoverAmount;
+        NotifyHealthChanged();
+    }
 
     void Death()//점점 넘어지기
     {
@@ -189,8 +194,6 @@ public class PlayerController : MonoBehaviour
                 return;
             }
         }
-        OnDeath?.Invoke();
-
     }
     // 무기교체
     void ChangeWeapon()
@@ -334,15 +337,20 @@ public class PlayerController : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction * _interactDistance, Color.yellow, 1f);
         if (Physics.Raycast(ray, out hit, _interactDistance) && hit.collider.TryGetComponent<IInteractable>(out IInteractable inter))
         {
-            if (inter.isInteract)
+            if (inter._isInteract)
             {
                 Debug.Log("상호작용 가능");
                 if (Input.GetKeyDown(KeyCode.F))
                 {
-                    if (inter.Use() && inter is BulletBox)
+                    if (inter is BulletBox && inter.Use())
                     {
-                        //_curGun.RefillAmmo();
                         Debug.Log("탄약 보충");
+                        _curGun.RefillAmmo();
+                    }
+                    if (inter is HealKit && inter.Use())
+                    {
+                        Debug.Log("체력 회복");
+                        RecoverHp(inter.GetValue());
                     }
                 }
             }
@@ -385,6 +393,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
+
             // Gun의 Shoot() 메서드를 호출하고 발사 성공 여부(bool)를 받음
             bool isShoot = _curGun.Shoot();
 
@@ -392,7 +401,7 @@ public class PlayerController : MonoBehaviour
             if (isShoot)
             {
                 // 반동주기
-                _curCameraRotationX -= _recoil;
+                _curCameraRotationX -=  _recoil;
             }
         }
     }
