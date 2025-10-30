@@ -9,7 +9,12 @@ public class GameManager : MonoBehaviour
 
     // 버티기 시간 (초)
     public float surviveTime = 20f;
-    private float timer = 0f;
+    public float timer = 0f;
+
+    //  추가된 웨이브 관련 변수
+    public int currentWave = 1;   // 현재 웨이브 번호
+    public int maxWave = 4;       // 최대 웨이브 수
+    public float waveTime = 120f; // 한 웨이브 지속 시간 (2분)
 
     // UI
     public Text score;
@@ -109,5 +114,4 @@ public class GameManager : MonoBehaviour
         stateText.text = "Press Space to Start";
         stageText.text = "Stage : 1";
     }
-    
 }
