@@ -136,12 +136,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc07274cddc1dc46a89c988a2a6c296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shootAudio: {fileID: 0}
-  _reloadAudio: {fileID: 0}
+  _shootAudio: {fileID: 8300000, guid: 2203773368e4340d98c114f55c2dd7fd, type: 3}
+  _reloadAudio: {fileID: 8300000, guid: 21ff5de8c1c8f9e4cb8fbf316e2c98c4, type: 3}
+  _refillAmmo: {fileID: 8300000, guid: 9158afb6966d445db9caf1dccf7acbcc, type: 3}
   _maxAmmo: 30
   _currentAmmo: 10
   _clipSize: 10
-  _shootRate: 3
+  _damage: 5
+  _reloadTime: 2
+  _shootRate: 2
 --- !u!95 &343264010848246109
 Animator:
   serializedVersion: 5
@@ -175,7 +178,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
