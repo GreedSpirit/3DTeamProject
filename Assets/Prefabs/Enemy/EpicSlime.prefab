@@ -147,9 +147,9 @@ MonoBehaviour:
   moveSpeed: 3
   rotationSpeed: 5
   chaseRange: 100
-  attackRange: 9
+  attackRange: 10.5
   retreatFactor: 1.5
-  hitboxActiveTime: 0.75
+  hitboxActiveTime: 1.5
   attackCooldown: 1
   attackDelayTime: 0.5
   stunDuration: 0.5
@@ -529,7 +529,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 711ae4feddda683409cd37c4744d01fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageAmount: 2
+  damageAmount: 5
 --- !u!65 &3921241392053233338
 BoxCollider:
   m_ObjectHideFlags: 0

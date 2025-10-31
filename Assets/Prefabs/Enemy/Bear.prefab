@@ -557,7 +557,7 @@ MonoBehaviour:
   retreatFactor: 1.5
   hitboxActiveTime: 1
   attackCooldown: 1.5
-  attackDelayTime: 1
+  attackDelayTime: 0.5
   stunDuration: 0.5
   attackHitbox: {fileID: 3518652683575708171}
 --- !u!54 &7414849532418286858
@@ -2006,7 +2006,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 711ae4feddda683409cd37c4744d01fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageAmount: 10
+  damageAmount: 8
 --- !u!65 &351184386842589977
 BoxCollider:
   m_ObjectHideFlags: 0
