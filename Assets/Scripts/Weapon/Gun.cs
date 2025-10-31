@@ -13,9 +13,9 @@ public class Gun : MonoBehaviour
     [SerializeField] private AudioClip _reloadAudio; // 장전 효과음
     [SerializeField] private AudioClip _refillAmmo; // 탄약 보급 효과음
 
-    [SerializeField] private int _maxAmmo; // 최대 탄약 수
-    [SerializeField] private int _currentAmmo; // 현재 탄약 수
-    [SerializeField] private int _clipSize; // 탄창 크기
+    [SerializeField] public int _maxAmmo; // 최대 탄약 수
+    [SerializeField] public int _currentAmmo; // 현재 탄약 수
+    [SerializeField] public int _clipSize; // 탄창 크기
 
     [SerializeField] private float _damage; // 총 데미지
     [SerializeField] private float _reloadTime; // 재장전 시간
@@ -31,9 +31,9 @@ public class Gun : MonoBehaviour
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
 
-    private bool isReloading = false; // 현재 장전 중인지 확인
+    public bool isReloading = false; // 현재 장전 중인지 확인
 
-    public Coroutine _reloadCoroutine; // 현재 실행 중인 재장전 코루틴
+    private Coroutine _reloadCoroutine; // 현재 실행 중인 재장전 코루틴
     private RaycastHit hitInfo;
 
     public List<IBulletConsumObserver> _healthObservers = new List<IBulletConsumObserver>();
@@ -63,11 +63,6 @@ public class Gun : MonoBehaviour
             _shootTimer -= Time.deltaTime;
         }
 
-        // 장전 중이 아닌데, 현재 탄약이 0이고, 남은 탄약이 있다면
-        if (!isReloading && _currentAmmo <= 0 && _maxAmmo > 0)
-        {
-            StartReload();
-        }
     }
 
     public int GetFov()
@@ -169,10 +164,10 @@ public class Gun : MonoBehaviour
             return;
         }
 
-        _reloadCoroutine = StartCoroutine(ReloadCoroutine());
+        isReloading = true; // 플래그만 설정 (PlayerController가 코루틴을 실행할 것임)
     }
 
-    private IEnumerator ReloadCoroutine()
+    public IEnumerator ReloadCoroutine()
     {
         isReloading = true;
 
@@ -181,7 +176,6 @@ public class Gun : MonoBehaviour
         {
             Debug.Log("이미 탄창이 꽉 찼습니다.");
             isReloading = false;
-            _reloadCoroutine = null;
             yield break;
         }
         // 남은 탄약이 없을 경우
@@ -189,7 +183,6 @@ public class Gun : MonoBehaviour
         {
             Debug.Log("남은 탄약이 없습니다.");
             isReloading = false;
-            _reloadCoroutine = null;
             yield break;
         }
 
@@ -206,7 +199,6 @@ public class Gun : MonoBehaviour
 
         Reload();
 
-        _reloadCoroutine = null; // 코루틴이 정상적으로 끝나면 null로 초기화
     }
 
     private void Reload()
@@ -236,9 +228,10 @@ public class Gun : MonoBehaviour
         if (isReloading)
         {
             Debug.Log("장전 취소됨");
-            StopCoroutine(_reloadCoroutine); // 실행 중인 코루틴 중지
+            // PlayerController가 전달한 코루틴을 중지
+            
+
             isReloading = false; // 장전 상태 false
-            _reloadCoroutine = null; // 장전 코루틴 비우기
             anim.SetTrigger("Idle"); // 애니메이션 리셋
         }
     }

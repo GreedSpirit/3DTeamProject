@@ -82,12 +82,21 @@ public class Enemy : MonoBehaviour
         if (!_isEpicMonster)
         {
 
-           
-
             if (CurrentHealth <= 0)
             {
                 Die();
                 return;
+            }
+            if (_currentState == EnemyState.Attack && _currentAttackCoroutine != null)
+            {
+                StopCoroutine(_currentAttackCoroutine);
+                _currentAttackCoroutine = null; // 코루틴 참조 해제
+
+                if (attackHitbox != null)
+                {
+                    attackHitbox.DisableHitbox(); // 히트박스 비활성화
+                }
+                _isPerformingAttack = false; // 공격 플래그 리셋
             }
             OnHit(hitPoint);
 
