@@ -188,6 +188,8 @@ public class PlayerController : MonoBehaviour
     void RecoverHp(int recoverAmount)
     {
         _currentHp += recoverAmount;
+        if(_currentHp>maxHp)
+            _currentHp = maxHp;
         NotifyHealthChanged();
     }
 
