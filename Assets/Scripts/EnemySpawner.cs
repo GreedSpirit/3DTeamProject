@@ -46,20 +46,18 @@ public class EnemySpawner : MonoBehaviour
             }
         }
 
-        // 1분 30초 이후 에픽 몬스터 또는 보스 등장
         if (!epicSpawned && GameManager.Instance.currentState == GameManager.GameState.Playing)
         {
-            // 남은 시간이 30초 이하일 때
-            if (GameManager.Instance.waveTime - GameManager.Instance.timer <= 30f)
+            //  4웨이브면 즉시 보스 소환
+            if (currentWaveForSpawner == GameManager.Instance.maxWave)
             {
-                if (currentWaveForSpawner == GameManager.Instance.maxWave)
-                {
-                    SpawnBoss(); // 4웨이브면 보스 스폰
-                }
-                else
-                {
-                    SpawnEpicEnemy(currentWaveForSpawner); // 1~3웨이브면 에픽 스폰
-                }
+                SpawnBoss();
+                epicSpawned = true;
+            }
+            //  1~3웨이브는 남은 시간이 30초 이하일 때 에픽 등장
+            else if (GameManager.Instance.waveTime - GameManager.Instance.timer <= 30f)
+            {
+                SpawnEpicEnemy(currentWaveForSpawner);
                 epicSpawned = true;
             }
         }
