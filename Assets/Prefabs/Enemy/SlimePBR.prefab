@@ -299,7 +299,7 @@ MonoBehaviour:
   rb: {fileID: 8290889646260660451}
   animator: {fileID: 6941273008908819789}
   mainCollider: {fileID: 2356905359782225793}
-  _maxHealth: 30
+  _maxHealth: 25
   moveSpeed: 3
   rotationSpeed: 5
   chaseRange: 300

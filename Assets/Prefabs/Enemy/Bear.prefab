@@ -502,7 +502,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2117133079206384764}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.97865236, z: -0, w: -0.20552275}
+  m_LocalRotation: {x: -0, y: -0.9786528, z: 0, w: -0.2055208}
   m_LocalPosition: {x: 0, y: 0, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -549,15 +549,15 @@ MonoBehaviour:
   rb: {fileID: 7414849532418286858}
   animator: {fileID: 1434934108161289805}
   mainCollider: {fileID: 5338093842873066675}
-  _maxHealth: 90
-  moveSpeed: 3
+  _maxHealth: 120
+  moveSpeed: 6
   rotationSpeed: 5
   chaseRange: 300
   attackRange: 3
   retreatFactor: 1.5
   hitboxActiveTime: 1
-  attackCooldown: 1.5
-  attackDelayTime: 1
+  attackCooldown: 1.3
+  attackDelayTime: 0.4
   stunDuration: 0.5
   attackHitbox: {fileID: 3518652683575708171}
 --- !u!54 &7414849532418286858

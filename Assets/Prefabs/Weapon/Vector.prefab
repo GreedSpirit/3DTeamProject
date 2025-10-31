@@ -121,7 +121,7 @@ MonoBehaviour:
   _maxAmmo: 90
   _currentAmmo: 30
   _clipSize: 30
-  _damage: 50
+  _damage: 15
   _reloadTime: 2
   _shootRate: 8
   _recoilForce: 1

@@ -15,7 +15,7 @@ public class GameEndUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            LoadingUIManager.Instance.LoadScene("InGameUI");
+            LoadingUIManager.Instance.LoadScene("InGame");
         }
     }
     

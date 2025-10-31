@@ -539,8 +539,8 @@ MonoBehaviour:
     m_Bits: 8
   _groundCheckDistance: 1.1
   _interactDistance: 2
-  _moveSpeed: 10
-  _dashSpeed: 20
+  _moveSpeed: 8
+  _dashSpeed: 12
   _JumpForce: 0.5
   _mouseSensitivity: 2.5
   _myCamera: {fileID: 2206018758940335226}
