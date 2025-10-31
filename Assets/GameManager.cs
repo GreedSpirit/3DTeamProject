@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI stateText;
 
     [SerializeField] private GameObject StatePanel;
+    [SerializeField] private InteractSpawn interactSpawn;
 
     // 싱글톤
     public static GameManager Instance;
@@ -142,6 +144,7 @@ public class GameManager : MonoBehaviour
         else if (wave == 4) // 보스(4웨이브)를 잡았을 때
         {
             ClearGame(); // 보스 잡으면 즉시 게임 클리어
+            
         }
     }
 
@@ -179,6 +182,7 @@ public class GameManager : MonoBehaviour
     void StartCombatWave()
     {
         Debug.Log($"웨이브 {currentWave} 시작");
+        interactSpawn.DisActiveAll();
         currentState = GameState.Playing;
         timer = 0f; // 전투 타이머 초기화
         curWaveTargetEnemy = null; // 새 웨이브 목표 초기화
@@ -214,6 +218,7 @@ public class GameManager : MonoBehaviour
         timer = 0f; // 정비 타이머 초기화
 
         ClearAllEnemies();
+        interactSpawn.CreateInteractObjects(3, 3, 3); // interactobject 생성
 
         StartCoroutine(StagePanelCoroutine("정비 시간"));
 
@@ -229,6 +234,10 @@ public class GameManager : MonoBehaviour
 
         ClearAllEnemies();
 
+        Invoke("Debug.Log()", 3f);
+
+        SceneManager.LoadScene("GameClearUI");
+
         if (spawner != null)
             spawner.StopSpawn();
     }
@@ -237,12 +246,12 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("게임 오버");
         currentState = GameState.GameOver;
-        stateText.text = "Game Over\nPress R to Restart";
-
         ClearAllEnemies();
 
         if (spawner != null)
             spawner.StopSpawn();
+
+        SceneManager.LoadScene("GameEndUI");
     }
 
 

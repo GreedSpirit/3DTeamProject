@@ -28,7 +28,7 @@ public class PlayerDeathEffect : MonoBehaviour
 
     public IEnumerator FadeOutStart()
     {
-        for (float f = 0f; f < 1; f += 0.0005f)
+        for (float f = 0f; f < 1; f += 0.001f)
         {
             Color c = _fadePanel.GetComponent<Image>().color;
             c.a = f;
