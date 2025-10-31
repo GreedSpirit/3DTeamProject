@@ -432,8 +432,12 @@ public class PlayerController : MonoBehaviour
                 {
                     if (inter is BulletBox && inter.Use())
                     {
+                        foreach(var g in _weaponList)
+                        {
+
+                            g.RefillAmmo();
+                        }
                         Debug.Log("탄약 보충");
-                        _curGun.RefillAmmo();
                     }
                     if (inter is HealKit && inter.Use())
                     {
