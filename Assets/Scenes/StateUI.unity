@@ -884,8 +884,9 @@ MonoBehaviour:
   timerText: {fileID: 516930002}
   stageText: {fileID: 516930001}
   stateText: {fileID: 516930000}
-  StatePanel: {fileID: 793737106}
-  interactSpawn: {fileID: 117110412}
+  _statePanel: {fileID: 793737106}
+  _achivePanel: {fileID: 2068868502}
+  _interactSpawn: {fileID: 117110412}
   spawner: {fileID: 2106352452}
   enemies: []
 --- !u!4 &1577567392
@@ -965,6 +966,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2106352453}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2068868502 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6165694930015888805, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
+  m_PrefabInstance: {fileID: 516929999}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2106352451
 GameObject:
   m_ObjectHideFlags: 0

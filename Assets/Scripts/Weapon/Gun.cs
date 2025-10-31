@@ -256,6 +256,7 @@ public class Gun : MonoBehaviour
     {
         _maxAmmo += 30; // 임시로 30 추가
         _audioSource.PlayOneShot(_refillAmmo);
+        NotifyBulletChanged();
     }
 
     private void NotifyBulletChanged()

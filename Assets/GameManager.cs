@@ -27,8 +27,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI stageText;
     public TextMeshProUGUI stateText;
 
-    [SerializeField] private GameObject StatePanel;
-    [SerializeField] private InteractSpawn interactSpawn;
+    [SerializeField] private GameObject _statePanel;
+    [SerializeField] private GameObject _achivePanel;
+    [SerializeField] private InteractSpawn _interactSpawn;
 
     // 싱글톤
     public static GameManager Instance;
@@ -59,7 +60,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         currentState = GameState.Ready;
-        StartCoroutine(StagePanelCoroutine("Press Space to Start"));
+        StartCoroutine(StagePanelCoroutine("Space를 눌러 전투를 시작하세요"));
     }
 
     void Update()
@@ -131,14 +132,17 @@ public class GameManager : MonoBehaviour
 
         if (wave == 1)
         {
+            StartCoroutine(AchivePanelCoroutine("에픽 몬스터 처치 보상 \n라이플 획득!(2번)"));
             StartRestWave(); // 1웨이브 즉시 종료
         }
         else if (wave == 2)
         {
+            StartCoroutine(AchivePanelCoroutine("에픽 몬스터 처치 보상 \n공격력 증가!"));
             StartRestWave(); // 2웨이브 즉시 종료
         }
         else if (wave == 3)
         {
+            StartCoroutine(AchivePanelCoroutine("에픽 몬스터 처치 보상 \n탄창 용량 증가!"));
             StartRestWave(); // 3웨이브 즉시 종료
         }
         else if (wave == 4) // 보스(4웨이브)를 잡았을 때
@@ -182,14 +186,14 @@ public class GameManager : MonoBehaviour
     void StartCombatWave()
     {
         Debug.Log($"웨이브 {currentWave} 시작");
-        interactSpawn.DisActiveAll();
+        StartCoroutine(StagePanelCoroutine($"웨이브 {currentWave} 시작"));
+        stageText.text = $"Stage {currentWave}";
+        
+        _interactSpawn.DisActiveAll();
         currentState = GameState.Playing;
         timer = 0f; // 전투 타이머 초기화
         curWaveTargetEnemy = null; // 새 웨이브 목표 초기화
         isTargetSet = false;
-
-        stateText.text = "Survive!";
-        stageText.text = $"Stage : {currentWave}";
 
         if (spawner != null)
             spawner.StartWave(currentWave); // 스포너에 웨이브 시작 알림
@@ -218,9 +222,9 @@ public class GameManager : MonoBehaviour
         timer = 0f; // 정비 타이머 초기화
 
         ClearAllEnemies();
-        interactSpawn.CreateInteractObjects(3, 3, 3); // interactobject 생성
+        _interactSpawn.CreateInteractObjects(3, 3, 3); // interactobject 생성
 
-        StartCoroutine(StagePanelCoroutine("정비 시간"));
+        StartCoroutine(StagePanelCoroutine("정비 시간입니다! 정비품을 찾고 다가가 F키를 누르세요"));
 
         if (spawner != null)
             spawner.StopSpawn(); // 정비 시간 동안 스폰 중지
@@ -251,7 +255,7 @@ public class GameManager : MonoBehaviour
         if (spawner != null)
             spawner.StopSpawn();
 
-        SceneManager.LoadScene("GameEndUI");
+        SceneManager.LoadScene("GameOverUI");
     }
 
 
@@ -274,9 +278,17 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator StagePanelCoroutine(string comment)
     {
-        StatePanel.SetActive(true);
-        StatePanel.GetComponentInChildren<TextMeshProUGUI>().text = comment;
+        _statePanel.SetActive(true);
+        _statePanel.GetComponentInChildren<TextMeshProUGUI>().text = comment;
         yield return new WaitForSeconds(2f);
-        StatePanel.SetActive(false);
+        _statePanel.SetActive(false);
+    }
+
+    public IEnumerator AchivePanelCoroutine(string comment)
+    {
+        _achivePanel.SetActive(true);
+        _achivePanel.GetComponentInChildren<TextMeshProUGUI>().text = comment;
+        yield return new WaitForSeconds(2f);
+        _achivePanel.SetActive(false);
     }
 }
