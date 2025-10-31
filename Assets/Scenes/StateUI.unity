@@ -239,6 +239,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1962617909971544308, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
+      propertyPath: m_Name
+      value: StatePanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 1962617909971544308, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -285,6 +289,10 @@ PrefabInstance:
     - target: {fileID: 3072067416002598714, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
       propertyPath: m_Name
       value: Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 3650021010824659705, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
+      propertyPath: m_Color.a
+      value: 0.21960784
       objectReference: {fileID: 0}
     - target: {fileID: 4694800855367860050, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
       propertyPath: m_Pivot.x
@@ -369,6 +377,26 @@ PrefabInstance:
     - target: {fileID: 6165694930015888805, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6330731783933546870, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
+      propertyPath: m_fontColor.a
+      value: 0.8509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 6330731783933546870, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6330731783933546870, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6330731783933546870, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6330731783933546870, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 3640655872
       objectReference: {fileID: 0}
     - target: {fileID: 7340251072394011691, guid: fccc41df03fb3a543bfd9764810ec24b, type: 3}
       propertyPath: m_AnchorMax.y
@@ -816,7 +844,7 @@ MonoBehaviour:
   timer: 0
   currentWave: 1
   maxWave: 4
-  waveTime: 20
+  waveTime: 40
   restTime: 10
   timerText: {fileID: 516930002}
   stageText: {fileID: 516930001}

@@ -2296,7 +2296,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 84
   m_CollisionDetection: 0
 --- !u!114 &65727198213836006
 MonoBehaviour:
@@ -2310,7 +2310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd4dbaac889119841bd7bc525429d5a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isEpicMonster: 0
+  _isEpicMonster: 1
   _waveNumber: 0
   rb: {fileID: 5273127379913336691}
   animator: {fileID: 3628679164989051990}
