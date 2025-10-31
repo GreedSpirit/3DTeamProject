@@ -61,7 +61,6 @@ public class PlayerController : MonoBehaviour
     private AudioSource[] audioSources;
     private float lastStepSoundTime = 0f;
 
-
     [Header("죽음")]
     [SerializeField]
     private float _deathAnimeMotionTime = 1.0f;
@@ -69,13 +68,15 @@ public class PlayerController : MonoBehaviour
     private Quaternion _deathRotation;
     private float _elapsedTime = 0f;
 
-    [SerializeField]
+    [Header("총")]
+    [SerializeField] List<Gun> guns;
     public int maxHp// 최대체력
     {
         get; set;
     } = 100;
     private int _currentHp;//현재 체력
     private float _curCameraRotationX = 0;//현재 카메라각도
+    bool isChange = false;
     private Rigidbody _myRigid;
 
     public List<IPlayerHealthObserver> _healthObservers = new List<IPlayerHealthObserver>();
@@ -90,6 +91,7 @@ public class PlayerController : MonoBehaviour
 
         // _weaponList 초기화
         _weaponList = new List<Gun>();
+
         // 컴포넌트를 찾는데 비활성화된 자식도 모두 찾기
         foreach (Gun gun in _myCamera.GetComponentsInChildren<Gun>(true))
         {
@@ -186,8 +188,11 @@ public class PlayerController : MonoBehaviour
     void RecoverHp(int recoverAmount)
     {
         _currentHp += recoverAmount;
+        if(_currentHp>maxHp)
+            _currentHp = maxHp;
         NotifyHealthChanged();
     }
+
     private WaveRewardType GetRewardTypeByWave(int waveNumber)
     {
         switch (waveNumber)
@@ -237,16 +242,9 @@ public class PlayerController : MonoBehaviour
             // 이미 해당 무기를 들고 있거나 활성화되어 있다면 스킵
             if (_weaponList[rifleIndex].gameObject.activeSelf || _weaponList[rifleIndex] == _curGun) return;
 
-            // 기존 무기 장전 취소 및 비활성화
-            _curGun.CancelReload();
-            _curGun.gameObject.SetActive(false);
+            //라이플 추가
+            isChange=true;
 
-            // 라이플로 교체 및 활성화
-            _curGun = _weaponList[rifleIndex];
-            _gunIndex = rifleIndex;
-
-            _curGun.gameObject.SetActive(true);
-            _curGun.DrawWeapon(); // 라이플 드로우 애니메이션 시작
             Debug.Log("[Reward] 웨이브 1 보상: 라이플을 획득했습니다.");
         }
         else
@@ -286,6 +284,8 @@ public class PlayerController : MonoBehaviour
     // 무기교체
     void ChangeWeapon()
     {
+        if (!isChange)
+            return;
         for (int i = 0; i < _weaponKeys.Length; i++)
         {
             if (Input.GetKeyDown((_weaponKeys[i])))
@@ -432,8 +432,12 @@ public class PlayerController : MonoBehaviour
                 {
                     if (inter is BulletBox && inter.Use())
                     {
+                        foreach(var g in _weaponList)
+                        {
+
+                            g.RefillAmmo();
+                        }
                         Debug.Log("탄약 보충");
-                        _curGun.RefillAmmo();
                     }
                     if (inter is HealKit && inter.Use())
                     {
