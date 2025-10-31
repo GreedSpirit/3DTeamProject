@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 711ae4feddda683409cd37c4744d01fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageAmount: 2
+  damageAmount: 4
 --- !u!65 &1022284923557167894
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -791,7 +791,7 @@ MonoBehaviour:
   chaseRange: 300
   attackRange: 2
   retreatFactor: 1.5
-  hitboxActiveTime: 0.5
+  hitboxActiveTime: 0.75
   attackCooldown: 0.5
   attackDelayTime: 0.25
   stunDuration: 0.5
