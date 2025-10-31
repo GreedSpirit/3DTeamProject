@@ -32,10 +32,14 @@ public class InteractObject : MonoBehaviour, IInteractable
     {
         yield return new WaitForSeconds(delay);
 
+        gameObject.SetActive(false);
+        ResetObject();
+
+    }
+    public void ResetObject()
+    {
         Transform child = transform.GetChild(1);
         child.gameObject.SetActive(true);
         _isInteract = true;
-        gameObject.SetActive(false);
-
     }
 }
