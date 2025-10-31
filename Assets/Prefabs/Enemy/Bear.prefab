@@ -549,10 +549,10 @@ MonoBehaviour:
   rb: {fileID: 7414849532418286858}
   animator: {fileID: 1434934108161289805}
   mainCollider: {fileID: 5338093842873066675}
-  _maxHealth: 100
+  _maxHealth: 90
   moveSpeed: 3
   rotationSpeed: 5
-  chaseRange: 100
+  chaseRange: 300
   attackRange: 3
   retreatFactor: 1.5
   hitboxActiveTime: 1

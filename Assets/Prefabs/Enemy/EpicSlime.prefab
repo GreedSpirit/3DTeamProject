@@ -146,7 +146,7 @@ MonoBehaviour:
   _maxHealth: 100
   moveSpeed: 3
   rotationSpeed: 5
-  chaseRange: 100
+  chaseRange: 300
   attackRange: 9
   retreatFactor: 1.5
   hitboxActiveTime: 0.75
