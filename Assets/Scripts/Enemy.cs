@@ -302,7 +302,6 @@ public class Enemy : MonoBehaviour
         {
             // PlayerController의 보상 지급 함수 호출
             _playerController.GrantWaveReward(_waveNumber);
-            Debug.Log($"에픽 몬스터 처치됨. Wave {_waveNumber} 보상 지급 요청.");
         }
         Destroy(gameObject, 5f);
     }

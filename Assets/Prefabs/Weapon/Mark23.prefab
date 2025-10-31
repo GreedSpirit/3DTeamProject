@@ -174,11 +174,13 @@ MonoBehaviour:
   _maxAmmo: 30
   _currentAmmo: 10
   _clipSize: 10
-  _damage: 5
+  _damage: 50
   _reloadTime: 2
   _shootRate: 2
-  _recoilForce: 20
+  _recoilForce: 1
   _aimingFov: 10
+  _attackIncreaseAmount: 5
+  _magazineIncreaseAmount: 5
 --- !u!95 &343264010848246109
 Animator:
   serializedVersion: 5
