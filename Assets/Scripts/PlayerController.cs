@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     // 이벤트
     public event Action OnDeath;
     //event Action<int> OnHealthChange;
-
+    private Coroutine _currentReloadCoroutine; // 현재 진행 중인 장전 코루틴
     Gun _curGun; //현재 무기
     List<Gun> _weaponList; // 무기 목록
     int _gunIndex; // 현재 무기 인덱스
@@ -256,15 +256,41 @@ public class PlayerController : MonoBehaviour
     private void IncreaseAttackPower()
     {
         // 웨이브 2 보상: 공격력 상승 -> Gun 스크립트의 메서드 호출
-        _curGun.IncreaseDamage();
-        Debug.Log("[Reward] 웨이브 2 보상: 플레이어 공격력이 상승했습니다.");
+        if (_weaponList == null || _weaponList.Count == 0)
+        {
+            Debug.LogWarning("[Reward] 공격력 상승 실패: 무기 목록이 비어있습니다.");
+            return;
+        }
+
+        foreach (Gun gun in _weaponList)
+        {
+            if (gun != null)
+            {
+                gun.IncreaseDamage(); // Gun.cs의 IncreaseDamage() 호출
+            }
+        }
+
+        Debug.Log("[Reward] 웨이브 2 보상: 모든 무기의 공격력이 상승했습니다.");
     }
 
     private void IncreaseMagazineCapacity()
     {
         // 웨이브 3 보상: 탄창 증가 -> Gun 스크립트의 메서드 호출
-        _curGun.IncreaseClipSize();
-        Debug.Log("[Reward] 웨이브 3 보상: 탄창 크기가 증가했습니다.");
+        if (_weaponList == null || _weaponList.Count == 0)
+        {
+            Debug.LogWarning("[Reward] 탄창 증가 실패: 무기 목록이 비어있습니다.");
+            return;
+        }
+
+        foreach (Gun gun in _weaponList)
+        {
+            if (gun != null)
+            {
+                gun.IncreaseClipSize(); 
+            }
+        }
+
+        Debug.Log("[Reward] 웨이브 3 보상: 모든 무기의 탄창 크기가 증가했습니다.");
     }
 
     void Death()//점점 넘어지기
@@ -284,14 +310,18 @@ public class PlayerController : MonoBehaviour
     // 무기교체
     void ChangeWeapon()
     {
-        if (!isChange)
-            return;
+        
         for (int i = 0; i < _weaponKeys.Length; i++)
         {
             if (Input.GetKeyDown((_weaponKeys[i])))
             {
                 if (i < _weaponList.Count && _weaponList[i] != null && _gunIndex != i)
                 {
+                    if (_currentReloadCoroutine != null)
+                    {
+                        StopCoroutine(_currentReloadCoroutine);
+                        _currentReloadCoroutine = null; // 중지 후 null로 설정
+                    }
                     // 장전 상태를 강제 취소
                     _curGun.CancelReload();
 
@@ -501,7 +531,18 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            _curGun.StartReload();
+            // Gun의 유효성 검사 로직을 그대로 가져왔습니다.
+            if (_curGun.isReloading || _curGun._currentAmmo == _curGun._clipSize || _curGun._maxAmmo <= 0)
+                return;
+
+            // 이미 진행 중인 코루틴이 있다면 안전하게 중지 (이전 무기의 코루틴일 수도 있음)
+            if (_currentReloadCoroutine != null)
+            {
+                StopCoroutine(_currentReloadCoroutine);
+            }
+
+             // PlayerController에서 Gun의 장전 코루틴을 실행
+            _currentReloadCoroutine = StartCoroutine(_curGun.ReloadCoroutine());
         }
     }
     private void NotifyHealthChanged()
