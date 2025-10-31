@@ -16,26 +16,35 @@ public class InteractSpawn : MonoBehaviour
 
     private List<GameObject> _InteractableObjects = new List<GameObject>();
 
-    [SerializeField] private int _RandAmount = 3;
-    [SerializeField] private int _healKitAmount = 3;
-    [SerializeField] private int _BulletBoxAmount = 3;
 
     void Start()
     {
         _transforms = GetComponentsInChildren<Transform>().ToList();
-        CreateRandomInteractObjects(_RandAmount, InteractType.Rand);
-        CreateRandomInteractObjects(_BulletBoxAmount, InteractType.BulletBox);
-        CreateRandomInteractObjects(_healKitAmount, InteractType.Healkit);
     }
 
-    public void CreateRandomInteractObjects(int num, InteractType type)
+    //랜덤 = Bullet,Healkit 중 랜덤으로 선택되서 나오는 오브젝트의 총량
+    //BulletBoxAmount = 생성될 불릿박스의 총량, 
+    //HealkitAmount = 생성될 힐킷의 총량, 
+    //ex CreateInteractObjects(1,2,3) = 둘중하나 1, 불릿 2, 힐킷3 총 6개
+
+    public void CreateInteractObjects(int RandAmount, int BulletBoxAmount, int HealkitAmount)
+    {
+        CreateRandomInteractObjects(RandAmount, InteractType.Rand);
+        CreateRandomInteractObjects(BulletBoxAmount, InteractType.BulletBox);
+        CreateRandomInteractObjects(HealkitAmount, InteractType.Healkit);
+    }
+
+
+
+
+    private void CreateRandomInteractObjects(int num, InteractType type)//해당 타입 랜덤위치에 입력한 갯수만큼 생성
     {
         for (int i = 0; i < num; i++)
         {
             CreateRandomInteractObject(type);
         }
     }
-    private void CreateRandomInteractObject(InteractType type)
+    private void CreateRandomInteractObject(InteractType type)// 해당타입 랜덤위치에 생성
     {
         int Index;
         if (type == InteractType.Rand)
@@ -57,5 +66,12 @@ public class InteractSpawn : MonoBehaviour
         }
         GameObject obj = Instantiate(_InteractablePrefabs[Index], _transforms[positionRand]);
         _InteractableObjects.Add(obj);
+    }
+    public void DisActiveAll()
+    {
+        foreach (GameObject inter in _InteractableObjects)
+        {
+            inter.SetActive(false);
+        }
     }
 }
