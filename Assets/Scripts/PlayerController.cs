@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public event Action OnDeath;
     //event Action<int> OnHealthChange;
     private Coroutine _currentReloadCoroutine; // 현재 진행 중인 장전 코루틴
+    private List<bool> _isWeaponAcquired;
     Gun _curGun; //현재 무기
     List<Gun> _weaponList; // 무기 목록
     int _gunIndex; // 현재 무기 인덱스
@@ -91,12 +92,14 @@ public class PlayerController : MonoBehaviour
 
         // _weaponList 초기화
         _weaponList = new List<Gun>();
-
+        _isWeaponAcquired = new List<bool>();
         // 컴포넌트를 찾는데 비활성화된 자식도 모두 찾기
         foreach (Gun gun in _myCamera.GetComponentsInChildren<Gun>(true))
         {
             _weaponList.Add(gun);
             gun.gameObject.SetActive(false); // 모든 무기를 비활성화
+            // 라이플 기본적으로 '미획득'으로 설정
+            _isWeaponAcquired.Add(false);
         }
 
         // 1번 무기를 기본 무기로 설정
@@ -105,6 +108,8 @@ public class PlayerController : MonoBehaviour
             _gunIndex = 0;
             _curGun = _weaponList[_gunIndex];
             _curGun.gameObject.SetActive(true);
+            // 피스톨만 획득 상태로 설정
+            _isWeaponAcquired[_gunIndex] = true;
         }
 
         NotifyHealthChanged();
@@ -239,13 +244,14 @@ public class PlayerController : MonoBehaviour
         if (_weaponList.Count > 1)
         {
             int rifleIndex = 1;
-            // 이미 해당 무기를 들고 있거나 활성화되어 있다면 스킵
-            if (_weaponList[rifleIndex].gameObject.activeSelf || _weaponList[rifleIndex] == _curGun) return;
+            if (_isWeaponAcquired[rifleIndex])
+            {
+                Debug.LogWarning("[Reward] 라이플은 이미 획득했습니다.");
+                return;
+            }
+            _isWeaponAcquired[rifleIndex] = true;
 
-            //라이플 추가
-            isChange=true;
-
-            Debug.Log("[Reward] 웨이브 1 보상: 라이플을 획득했습니다.");
+            Debug.Log("[Reward] 웨이브 1 보상: 라이플을 획득했습니다. 2번 키로 교체할 수 있습니다.");
         }
         else
         {
@@ -315,7 +321,7 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKeyDown((_weaponKeys[i])))
             {
-                if (i < _weaponList.Count && _weaponList[i] != null && _gunIndex != i)
+                if (i < _weaponList.Count && _weaponList[i] != null && _gunIndex != i && _isWeaponAcquired[i])
                 {
                     if (_currentReloadCoroutine != null)
                     {
@@ -336,6 +342,10 @@ public class PlayerController : MonoBehaviour
                     _curGun.gameObject.SetActive(true);
                     _curGun.DrawWeapon();
                     break;
+                }
+                else if (Input.GetKeyDown((_weaponKeys[i])) && i < _weaponList.Count && _weaponList[i] != null && !_isWeaponAcquired[i])
+                {
+                    Debug.Log($"[Weapon] {i + 1}번 무기는 아직 획득하지 못했습니다.");
                 }
             }
         }
