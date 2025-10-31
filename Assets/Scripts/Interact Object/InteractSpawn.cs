@@ -61,7 +61,8 @@ public class InteractSpawn : MonoBehaviour
             if (!inter.activeSelf)
             {
                 inter.SetActive(true);
-                inter.transform.position = _transforms[positionRand].position; return;
+                inter.transform.position = _transforms[positionRand].position; 
+                return;
             }
         }
         GameObject obj = Instantiate(_InteractablePrefabs[Index], _transforms[positionRand]);
