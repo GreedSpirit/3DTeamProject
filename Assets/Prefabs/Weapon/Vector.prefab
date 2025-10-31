@@ -121,11 +121,13 @@ MonoBehaviour:
   _maxAmmo: 90
   _currentAmmo: 30
   _clipSize: 30
-  _damage: 0
+  _damage: 50
   _reloadTime: 2
   _shootRate: 8
   _recoilForce: 1
   _aimingFov: 10
+  _attackIncreaseAmount: 5
+  _magazineIncreaseAmount: 5
 --- !u!82 &4177201129906686191
 AudioSource:
   m_ObjectHideFlags: 0
