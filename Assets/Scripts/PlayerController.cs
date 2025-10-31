@@ -76,6 +76,7 @@ public class PlayerController : MonoBehaviour
     } = 100;
     private int _currentHp;//현재 체력
     private float _curCameraRotationX = 0;//현재 카메라각도
+    bool isChange = false;
     private Rigidbody _myRigid;
 
     public List<IPlayerHealthObserver> _healthObservers = new List<IPlayerHealthObserver>();
@@ -91,7 +92,22 @@ public class PlayerController : MonoBehaviour
         // _weaponList 초기화
         _weaponList = new List<Gun>();
 
-        SetGun(0);
+        // 컴포넌트를 찾는데 비활성화된 자식도 모두 찾기
+        foreach (Gun gun in _myCamera.GetComponentsInChildren<Gun>(true))
+        {
+            _weaponList.Add(gun);
+            gun.gameObject.SetActive(false); // 모든 무기를 비활성화
+        }
+
+        // 1번 무기를 기본 무기로 설정
+        if (_weaponList.Count > 0)
+        {
+            _gunIndex = 0;
+            _curGun = _weaponList[_gunIndex];
+            _curGun.gameObject.SetActive(true);
+        }
+
+        //isChange = true;
 
         NotifyHealthChanged();
         audioSources = GetComponents<AudioSource>();
@@ -176,14 +192,6 @@ public class PlayerController : MonoBehaviour
         _currentHp += recoverAmount;
         NotifyHealthChanged();
     }
-    //총 추가 함수,
-    void SetGun(int _gunIndex)
-    {
-        Gun gun = Instantiate(guns[_gunIndex], _myCamera.transform);
-        _weaponList.Add(gun); 
-        _curGun = gun;
-        _curGun.gameObject.SetActive(true);
-    }
 
     private WaveRewardType GetRewardTypeByWave(int waveNumber)
     {
@@ -239,7 +247,7 @@ public class PlayerController : MonoBehaviour
             _curGun.gameObject.SetActive(false);
 
             //라이플 추가
-            SetGun(1);
+            isChange=true;
 
             // 라이플로 교체 및 활성화
             _curGun = _weaponList[rifleIndex];
@@ -286,6 +294,8 @@ public class PlayerController : MonoBehaviour
     // 무기교체
     void ChangeWeapon()
     {
+        if (!isChange)
+            return;
         for (int i = 0; i < _weaponKeys.Length; i++)
         {
             if (Input.GetKeyDown((_weaponKeys[i])))
