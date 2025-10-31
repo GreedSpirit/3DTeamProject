@@ -61,7 +61,6 @@ public class PlayerController : MonoBehaviour
     private AudioSource[] audioSources;
     private float lastStepSoundTime = 0f;
 
-
     [Header("죽음")]
     [SerializeField]
     private float _deathAnimeMotionTime = 1.0f;
@@ -69,7 +68,8 @@ public class PlayerController : MonoBehaviour
     private Quaternion _deathRotation;
     private float _elapsedTime = 0f;
 
-    [SerializeField]
+    [Header("총")]
+    [SerializeField] List<Gun> guns;
     public int maxHp// 최대체력
     {
         get; set;
@@ -90,20 +90,8 @@ public class PlayerController : MonoBehaviour
 
         // _weaponList 초기화
         _weaponList = new List<Gun>();
-        // 컴포넌트를 찾는데 비활성화된 자식도 모두 찾기
-        foreach (Gun gun in _myCamera.GetComponentsInChildren<Gun>(true))
-        {
-            _weaponList.Add(gun);
-            gun.gameObject.SetActive(false); // 모든 무기를 비활성화
-        }
 
-        // 1번 무기를 기본 무기로 설정
-        if (_weaponList.Count > 0)
-        {
-            _gunIndex = 0;
-            _curGun = _weaponList[_gunIndex];
-            _curGun.gameObject.SetActive(true);
-        }
+        SetGun(0);
 
         NotifyHealthChanged();
         audioSources = GetComponents<AudioSource>();
@@ -188,6 +176,15 @@ public class PlayerController : MonoBehaviour
         _currentHp += recoverAmount;
         NotifyHealthChanged();
     }
+    //총 추가 함수,
+    void SetGun(int _gunIndex)
+    {
+        Gun gun = Instantiate(guns[_gunIndex], _myCamera.transform);
+        _weaponList.Add(gun); 
+        _curGun = gun;
+        _curGun.gameObject.SetActive(true);
+    }
+
     private WaveRewardType GetRewardTypeByWave(int waveNumber)
     {
         switch (waveNumber)
@@ -240,6 +237,9 @@ public class PlayerController : MonoBehaviour
             // 기존 무기 장전 취소 및 비활성화
             _curGun.CancelReload();
             _curGun.gameObject.SetActive(false);
+
+            //라이플 추가
+            SetGun(1);
 
             // 라이플로 교체 및 활성화
             _curGun = _weaponList[rifleIndex];

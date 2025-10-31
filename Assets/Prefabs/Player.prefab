@@ -104,11 +104,11 @@ GameObject:
   - component: {fileID: 5707786477757438552}
   - component: {fileID: 7039609505975381654}
   - component: {fileID: 2874499860832475290}
-  - component: {fileID: 3113564297523451221}
   - component: {fileID: 8533171413331111151}
   - component: {fileID: 3948755606921435401}
   - component: {fileID: 8388655099787017771}
   - component: {fileID: 1651972242747377093}
+  - component: {fileID: 1982720436481970794}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -205,36 +205,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3113564297523451221
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3238887339617377548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9629e4ef2b4c3314ca074c617ed7e4a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  _groundCheckDistance: 1.1
-  _interactDistance: 2
-  _moveSpeed: 10
-  _dashSpeed: 20
-  _JumpForce: 0.5
-  _mouseSensitivity: 2.5
-  _myCamera: {fileID: 2206018758940335226}
-  _cameraRotationLimit: 90
-  _baseFOV: 60
-  _rollSpeed: 15
-  _rollTime: 0.5
-  _rollSize: 0.7
-  _moveSoundInterval: 0.5
-  _dashSoundInterval: 0.2
-  _deathAnimeMotionTime: 1
 --- !u!54 &8533171413331111151
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -550,3 +520,36 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1982720436481970794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3238887339617377548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9629e4ef2b4c3314ca074c617ed7e4a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  _groundCheckDistance: 1.1
+  _interactDistance: 2
+  _moveSpeed: 10
+  _dashSpeed: 20
+  _JumpForce: 0.5
+  _mouseSensitivity: 2.5
+  _myCamera: {fileID: 2206018758940335226}
+  _cameraRotationLimit: 90
+  _baseFOV: 60
+  _rollSpeed: 25
+  _rollTime: 0.5
+  _rollSize: 0.7
+  _moveSoundInterval: 0.5
+  _dashSoundInterval: 0.2
+  _deathAnimeMotionTime: 1
+  guns:
+  - {fileID: 9125036918261489128, guid: 9575d9ab65d1ff64e9cea747d2159f5e, type: 3}
+  - {fileID: 4467138221490921687, guid: 2fbefc62619d51145af537bf60e3922b, type: 3}
