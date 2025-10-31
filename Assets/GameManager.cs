@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // TMPro 사용
+using TMPro;
+using System.Collections; // TMPro 사용
 
 public class GameManager : MonoBehaviour
 {
@@ -21,9 +22,11 @@ public class GameManager : MonoBehaviour
     public float restTime = 30f;
 
     // UI
-    public TextMeshProUGUI score;
+    public TextMeshProUGUI timerText;
     public TextMeshProUGUI stageText;
     public TextMeshProUGUI stateText;
+
+    [SerializeField] private GameObject StatePanel;
 
     // 싱글톤
     public static GameManager Instance;
@@ -53,8 +56,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         currentState = GameState.Ready;
-        //stateText.text = "Press Space to Start";
-        //stageText.text = "Stage : 1";
+        StartCoroutine(StagePanelCoroutine("Press Space to Start"));
     }
 
     void Update()
@@ -68,6 +70,9 @@ public class GameManager : MonoBehaviour
 
             case GameState.Playing:
                 timer += Time.deltaTime;
+                int remainTime = (int)(waveTime - timer);
+                if (remainTime <= 0) remainTime = 0;
+                timerText.text = remainTime / 60 + " : " + remainTime % 60;
 
                 enemies.RemoveAll(item => item == null);
 
@@ -87,6 +92,9 @@ public class GameManager : MonoBehaviour
             // 정비 상태
             case GameState.Rest:
                 timer += Time.deltaTime;
+                int remainRestTime = (int)(restTime - timer);
+                if (remainRestTime <= 0) remainTime = 0;
+                timerText.text = remainRestTime / 60 + " : " + remainRestTime % 60;
                 if (timer >= restTime)
                 {
                     // 정비 시간이 끝나면 다음 웨이브 시작
@@ -199,8 +207,8 @@ public class GameManager : MonoBehaviour
 
         ClearAllEnemies();
 
-        stateText.text = "Prepare for next wave...";
-        stateText.text = $"Resting...";
+        //stateText.text = "Prepare for next wave...";
+        StartCoroutine(StagePanelCoroutine("정비 시간입니다. 맵에서 정비품을 찾으세요"));
 
         if (spawner != null)
             spawner.StopSpawn(); // 정비 시간 동안 스폰 중지
@@ -240,5 +248,13 @@ public class GameManager : MonoBehaviour
         currentState = GameState.Ready;
         stateText.text = "Press Space to Start";
         stageText.text = "Stage : 1";
+    }
+
+    public IEnumerator StagePanelCoroutine(string comment)
+    {
+        StatePanel.SetActive(true);
+        StatePanel.GetComponentInChildren<TextMeshProUGUI>().text = comment;
+        yield return new WaitForSeconds(2f);
+        StatePanel.SetActive(false);
     }
 }
