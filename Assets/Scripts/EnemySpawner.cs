@@ -6,7 +6,7 @@ public class WaveData
 {
     public string waveName; // 웨이브 이름
     public GameObject normalEnemyPrefab; // 일반 몬스터
-    public GameObject epicEnemyPrefab;   // 에픽 몬스터 (마지막 웨이브에서는 사용 안함)
+    public GameObject epicEnemyPrefab;   // 에픽 몬스터 (1~3웨이브 전용)
 }
 
 public class EnemySpawner : MonoBehaviour
@@ -27,6 +27,7 @@ public class EnemySpawner : MonoBehaviour
     private float timer = 0f;
     private bool isSpawning = false;
     private bool bossSpawned = false;
+    private bool epicSpawned = false;
     private int currentWaveForSpawner;
 
     void Update()
@@ -36,9 +37,9 @@ public class EnemySpawner : MonoBehaviour
 
         timer += Time.deltaTime;
 
-        // 마지막 웨이브에서는 스폰 빈도조절
+        // 마지막 웨이브는 스폰 속도 2배 빠르게
         float currentInterval = (currentWaveForSpawner == GameManager.Instance.maxWave)
-            ? spawnInterval * 0.5f    // 0.5면 2배인가?느린건가?
+            ? spawnInterval * 0.5f
             : spawnInterval;
 
         // 일반 몬스터 스폰
@@ -48,8 +49,24 @@ public class EnemySpawner : MonoBehaviour
             timer = 0f;
         }
 
-        // 마지막 웨이브 시작 시 보스 1회만 등장
-        if (!bossSpawned && currentWaveForSpawner == GameManager.Instance.maxWave)
+        // 웨이브별 특수 스폰 처리
+        HandleSpecialSpawns();
+    }
+
+    void HandleSpecialSpawns()
+    {
+        // 1~3웨이브: 30초 남았을 때 에픽 1회 등장
+        if (currentWaveForSpawner < GameManager.Instance.maxWave && !epicSpawned)
+        {
+            if (GameManager.Instance.waveTime - GameManager.Instance.timer <= 30f)
+            {
+                SpawnEpicEnemy(currentWaveForSpawner);
+                epicSpawned = true;
+            }
+        }
+
+        // 4웨이브: 시작 시 보스 1회 등장
+        if (currentWaveForSpawner == GameManager.Instance.maxWave && !bossSpawned)
         {
             SpawnBoss();
             bossSpawned = true;
@@ -68,7 +85,7 @@ public class EnemySpawner : MonoBehaviour
         Transform point = spawnPoints[index];
         GameObject prefab;
 
-        // 마지막 웨이브에서는 모든 웨이브의 일반몹 중 랜덤 선택
+        // 마지막 웨이브 → 모든 웨이브의 일반 몬스터 중 랜덤
         if (wave == GameManager.Instance.maxWave)
         {
             int randomWaveIndex = Random.Range(0, waveList.Count);
@@ -86,7 +103,27 @@ public class EnemySpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 보스 몬스터 스폰
+    /// 에픽 몬스터 스폰 (1~3웨이브용)
+    /// </summary>
+    public void SpawnEpicEnemy(int wave)
+    {
+        WaveData data = waveList[wave - 1];
+        if (data.epicEnemyPrefab == null) return;
+
+        int index = Random.Range(0, spawnPoints.Length);
+        Transform point = spawnPoints[index];
+
+        GameObject epic = Instantiate(data.epicEnemyPrefab, point.position, point.rotation);
+        GameManager.Instance.enemies.Add(epic);
+
+        GameManager.Instance.SetEnemy(epic);
+        GameManager.Instance.EpicOutput("에픽 몬스터가 등장했습니다. 처치하고 보상을 획득하세요!");
+
+        Debug.Log("에픽 몬스터 등장!");
+    }
+
+    /// <summary>
+    /// 보스 몬스터 스폰 (4웨이브 전용)
     /// </summary>
     public void SpawnBoss()
     {
@@ -100,6 +137,7 @@ public class EnemySpawner : MonoBehaviour
 
         GameManager.Instance.SetEnemy(boss);
         GameManager.Instance.EpicOutput("보스 트롤이 등장했습니다. 행운을 빕니다!");
+
         Debug.Log("보스 트롤 등장!");
     }
 
@@ -120,5 +158,6 @@ public class EnemySpawner : MonoBehaviour
         currentWaveForSpawner = wave;
         StartSpawn();
         bossSpawned = false;
+        epicSpawned = false;
     }
 }
