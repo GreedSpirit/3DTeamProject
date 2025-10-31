@@ -82,29 +82,29 @@ public class Enemy : MonoBehaviour
         if (!_isEpicMonster)
         {
 
-            OnHit(hitPoint);
+           
 
             if (CurrentHealth <= 0)
             {
                 Die();
+                return;
             }
-            else
+            OnHit(hitPoint);
+
+            // 경직 로직 실행: 피격 시 항상 Stun 상태로 전환
+            // 기존 경직 코루틴 중지 및 리셋
+            if (_currentStunCoroutine != null)
             {
-                // 경직 로직 실행: 피격 시 항상 Stun 상태로 전환
-                // 기존 경직 코루틴 중지 및 리셋
-                if (_currentStunCoroutine != null)
-                {
-                    StopCoroutine(_currentStunCoroutine);
-                    _currentStunCoroutine = null;
-                }
-
-                SetState(EnemyState.Stun);
-
-                // 경직 시간 코루틴 시작
-                _currentStunCoroutine = StartCoroutine(StunRoutine());
-
-                // Idle 상태에서 피격당했다면, Stun이 끝난 후 Chase 상태로 가게 StunRoutine에 맡김
+                StopCoroutine(_currentStunCoroutine);
+                _currentStunCoroutine = null;
             }
+
+            SetState(EnemyState.Stun);
+
+            // 경직 시간 코루틴 시작
+            _currentStunCoroutine = StartCoroutine(StunRoutine());
+
+            // Idle 상태에서 피격당했다면, Stun이 끝난 후 Chase 상태로 가게 StunRoutine에 맡김
         }
         else // 보스 몬스터인 경우
         {
@@ -233,6 +233,11 @@ public class Enemy : MonoBehaviour
                 break;
             case EnemyState.Stun: // 경직 상태 진입 시 이동 정지
                 rb.velocity = Vector3.zero;
+                animator.SetBool("run", false);
+                break;
+            case EnemyState.Dead: // 사망 상태 진입 시 추가
+                rb.velocity = Vector3.zero;
+                //사망 시 run 종료
                 animator.SetBool("run", false);
                 break;
 
