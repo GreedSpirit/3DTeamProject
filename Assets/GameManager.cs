@@ -250,6 +250,11 @@ public class GameManager : MonoBehaviour
         stageText.text = "Stage : 1";
     }
 
+    public void EpicOutput(string comment)
+    {
+        StartCoroutine(StagePanelCoroutine(comment));
+    }
+
     public IEnumerator StagePanelCoroutine(string comment)
     {
         StatePanel.SetActive(true);
