@@ -107,8 +107,6 @@ public class PlayerController : MonoBehaviour
             _curGun.gameObject.SetActive(true);
         }
 
-        //isChange = true;
-
         NotifyHealthChanged();
         audioSources = GetComponents<AudioSource>();
     }
@@ -242,19 +240,9 @@ public class PlayerController : MonoBehaviour
             // 이미 해당 무기를 들고 있거나 활성화되어 있다면 스킵
             if (_weaponList[rifleIndex].gameObject.activeSelf || _weaponList[rifleIndex] == _curGun) return;
 
-            // 기존 무기 장전 취소 및 비활성화
-            _curGun.CancelReload();
-            _curGun.gameObject.SetActive(false);
-
             //라이플 추가
             isChange=true;
 
-            // 라이플로 교체 및 활성화
-            _curGun = _weaponList[rifleIndex];
-            _gunIndex = rifleIndex;
-
-            _curGun.gameObject.SetActive(true);
-            _curGun.DrawWeapon(); // 라이플 드로우 애니메이션 시작
             Debug.Log("[Reward] 웨이브 1 보상: 라이플을 획득했습니다.");
         }
         else
