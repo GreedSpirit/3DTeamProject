@@ -78,28 +78,41 @@ public class Enemy : MonoBehaviour
 
         //(대미지 계산, 체력 감소 로직)
         CurrentHealth -= amount;
-        OnHit(hitPoint);
 
-        if (CurrentHealth <= 0)
+        if (!_isEpicMonster)
         {
-            Die();
-        }
-        else
-        {
-            // 경직 로직 실행: 피격 시 항상 Stun 상태로 전환
-            // 기존 경직 코루틴 중지 및 리셋
-            if (_currentStunCoroutine != null)
+
+            OnHit(hitPoint);
+
+            if (CurrentHealth <= 0)
             {
-                StopCoroutine(_currentStunCoroutine);
-                _currentStunCoroutine = null;
+                Die();
             }
+            else
+            {
+                // 경직 로직 실행: 피격 시 항상 Stun 상태로 전환
+                // 기존 경직 코루틴 중지 및 리셋
+                if (_currentStunCoroutine != null)
+                {
+                    StopCoroutine(_currentStunCoroutine);
+                    _currentStunCoroutine = null;
+                }
 
-            SetState(EnemyState.Stun);
+                SetState(EnemyState.Stun);
 
-            // 경직 시간 코루틴 시작
-            _currentStunCoroutine = StartCoroutine(StunRoutine());
+                // 경직 시간 코루틴 시작
+                _currentStunCoroutine = StartCoroutine(StunRoutine());
 
-            // Idle 상태에서 피격당했다면, Stun이 끝난 후 Chase 상태로 가게 StunRoutine에 맡김
+                // Idle 상태에서 피격당했다면, Stun이 끝난 후 Chase 상태로 가게 StunRoutine에 맡김
+            }
+        }
+        else // 보스 몬스터인 경우
+        {
+            // 보스는 피격 모션, 경직 로직을 모두 건너뜀.
+            if (CurrentHealth <= 0)
+            {
+                Die(); // 사망 시에만 Die() 호출
+            }
         }
     }
 
