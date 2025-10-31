@@ -48,9 +48,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 81677881351166577, guid: fc312e40b49051249852eb94d4a3c3e2, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a07cf5def76cba844a5fccd1b5e072a5, type: 2}
     - target: {fileID: 919132149155446097, guid: fc312e40b49051249852eb94d4a3c3e2, type: 3}
       propertyPath: m_Name
-      value: SM_WeaponCrate_03
+      value: BulletBox
       objectReference: {fileID: 0}
     - target: {fileID: 4689611595452934013, guid: fc312e40b49051249852eb94d4a3c3e2, type: 3}
       propertyPath: m_IsActive
@@ -60,6 +64,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8985278208360639421, guid: fc312e40b49051249852eb94d4a3c3e2, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a07cf5def76cba844a5fccd1b5e072a5, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

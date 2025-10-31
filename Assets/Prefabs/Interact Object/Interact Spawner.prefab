@@ -53,8 +53,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _InteractablePrefabs:
-  - {fileID: 7656201903076266855, guid: d472573e35af7904dbfcebe9a545c882, type: 3}
-  - {fileID: 3162076188565525739, guid: 4c92caf0085704a42826db8487d03a28, type: 3}
+  - {fileID: 2236498130010985459, guid: d472573e35af7904dbfcebe9a545c882, type: 3}
+  - {fileID: 2461442928571137120, guid: 4c92caf0085704a42826db8487d03a28, type: 3}
 --- !u!1 &4812037611657372697
 GameObject:
   m_ObjectHideFlags: 0
