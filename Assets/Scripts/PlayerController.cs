@@ -4,6 +4,16 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+
+public enum WaveRewardType // 웨이브 보상 종류 정의
+{
+    None,
+    RifleAcquisition,
+    AttackPowerIncrease,
+    MagazineCapacityIncrease
+}
+
+
 public class PlayerController : MonoBehaviour
 {
     // 이동 WASD, 점프 Space, 달리기 Shift, 공격 좌클릭, 줌 우클릭, 총 교체 1,2,3,4키 or 휠 업/다운
@@ -177,6 +187,86 @@ public class PlayerController : MonoBehaviour
     {
         _currentHp += recoverAmount;
         NotifyHealthChanged();
+    }
+    private WaveRewardType GetRewardTypeByWave(int waveNumber)
+    {
+        switch (waveNumber)
+        {
+            case 1: return WaveRewardType.RifleAcquisition;
+            case 2: return WaveRewardType.AttackPowerIncrease;
+            case 3: return WaveRewardType.MagazineCapacityIncrease;
+            default: return WaveRewardType.None;
+        }
+    }
+    public void GrantWaveReward(int waveNumber)
+    {
+        if (!_isAlive) return;
+
+        WaveRewardType rewardType = GetRewardTypeByWave(waveNumber);
+
+        if (_curGun == null)
+        {
+            Debug.LogError("현재 총이 null 상태입니다.");
+            return;
+        }
+
+        switch (rewardType)
+        {
+            case WaveRewardType.RifleAcquisition:
+                GainRifle();
+                break;
+            case WaveRewardType.AttackPowerIncrease:
+                IncreaseAttackPower();
+                break;
+            case WaveRewardType.MagazineCapacityIncrease:
+                IncreaseMagazineCapacity();
+                break;
+            case WaveRewardType.None:
+                Debug.LogWarning($"[Reward] Wave {waveNumber}에 정의된 보상이 없습니다.");
+                break;
+        }
+        
+    }
+
+    private void GainRifle()
+    {
+        // 웨이브 1 보상: 라이플 획득
+        if (_weaponList.Count > 1)
+        {
+            int rifleIndex = 1;
+            // 이미 해당 무기를 들고 있거나 활성화되어 있다면 스킵
+            if (_weaponList[rifleIndex].gameObject.activeSelf || _weaponList[rifleIndex] == _curGun) return;
+
+            // 기존 무기 장전 취소 및 비활성화
+            _curGun.CancelReload();
+            _curGun.gameObject.SetActive(false);
+
+            // 라이플로 교체 및 활성화
+            _curGun = _weaponList[rifleIndex];
+            _gunIndex = rifleIndex;
+
+            _curGun.gameObject.SetActive(true);
+            _curGun.DrawWeapon(); // 라이플 드로우 애니메이션 시작
+            Debug.Log("[Reward] 웨이브 1 보상: 라이플을 획득했습니다.");
+        }
+        else
+        {
+            Debug.LogError("[Reward] 라이플이 무기 목록에 존재하지 않습니다.");
+        }
+    }
+
+    private void IncreaseAttackPower()
+    {
+        // 웨이브 2 보상: 공격력 상승 -> Gun 스크립트의 메서드 호출
+        _curGun.IncreaseDamage();
+        Debug.Log("[Reward] 웨이브 2 보상: 플레이어 공격력이 상승했습니다.");
+    }
+
+    private void IncreaseMagazineCapacity()
+    {
+        // 웨이브 3 보상: 탄창 증가 -> Gun 스크립트의 메서드 호출
+        _curGun.IncreaseClipSize();
+        Debug.Log("[Reward] 웨이브 3 보상: 탄창 크기가 증가했습니다.");
     }
 
     void Death()//점점 넘어지기

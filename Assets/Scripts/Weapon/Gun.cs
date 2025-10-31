@@ -23,6 +23,11 @@ public class Gun : MonoBehaviour
     [SerializeField] private float _recoilForce = 20f; //반동
     [SerializeField] private int _aimingFov = 10; //조준정도
 
+    [Header("Reward Stats")]
+    // 공격력 및 탄창 증가량을 인스펙터에서 설정할 수 있도록 추가
+    [SerializeField] private float _attackIncreaseAmount = 5f;
+    [SerializeField] private int _magazineIncreaseAmount = 5;
+
     private float _shootTimer; // 탄 발사 쿨다운 타이머
 
 
@@ -260,4 +265,34 @@ public class Gun : MonoBehaviour
             observer?.OnBulletChanged(_currentAmmo, _maxAmmo);
         }
     }
+
+    // 웨이브 2 보상: 공격력 상승
+    public void IncreaseDamage()
+    {
+        _damage += _attackIncreaseAmount;
+        Debug.Log($"[Gun] 공격력 상승: 현재 데미지 {_damage}");
+    }
+
+    // 웨이브 3 보상: 탄창 증가
+    public void IncreaseClipSize()
+    {
+        int increaseAmount = _magazineIncreaseAmount;
+
+        // 탄창 크기 증가
+        _clipSize += increaseAmount;
+
+        // 현재 탄창을 증가된 크기만큼 즉시 장전
+        if (_currentAmmo < _clipSize)
+        {
+            int needAmmo = _clipSize - _currentAmmo;
+            int loadAmmo = Mathf.Min(needAmmo, _maxAmmo);
+
+            _maxAmmo -= loadAmmo;
+            _currentAmmo += loadAmmo;
+        }
+
+        NotifyBulletChanged();
+        Debug.Log($"[Gun] 탄창 크기 상승: 현재 탄창 크기 {_clipSize}");
+    }
+
 }

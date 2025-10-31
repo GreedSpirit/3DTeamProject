@@ -1,20 +1,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro; // TMPro 사용
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameState { Ready, Playing, Clear, GameOver }
+    public enum GameState { Ready, Playing, Rest, Clear, GameOver }
     public GameState currentState = GameState.Ready;
 
-    // 버티기 시간 (초)
+    // 버티기 시간
     public float surviveTime = 20f;
-    private float timer = 0f;
+    public float timer = 0f;
+
+    //  웨이브 변수
+    public int currentWave = 1;   // 현재 웨이브 번호
+    public int maxWave = 4;       // 최대 웨이브 수
+    public float waveTime = 120f; // 한 웨이브 시간
+
+    // 정비 시간
+    public float restTime = 30f;
 
     // UI
-    public Text score;
-    public Text stageText;
-    public Text stateText;
+    public TextMeshProUGUI score;
+    public TextMeshProUGUI stageText;
+    public TextMeshProUGUI stateText;
 
     // 싱글톤
     public static GameManager Instance;
@@ -24,6 +33,9 @@ public class GameManager : MonoBehaviour
 
     // 현재 적 리스트
     public List<GameObject> enemies = new List<GameObject>();
+
+    // 조건 변수
+    private GameObject curWaveTargetEnemy; // 현재 웨이브의 목표
 
     void Awake()
     {
@@ -56,8 +68,31 @@ public class GameManager : MonoBehaviour
 
             case GameState.Playing:
                 timer += Time.deltaTime;
-                if (timer >= surviveTime)
-                    ClearStage();
+
+                enemies.RemoveAll(item => item == null);
+
+                // 몬스터가 스폰되었고 몬스터가죽었는지 확인
+                if (curWaveTargetEnemy != null && curWaveTargetEnemy == null)
+                {
+                    EpicMobReward(currentWave);
+                }
+
+                // 시간이 다 되었을 때
+                if (timer >= waveTime)
+                {
+                    OnWaveTimeUp(currentWave); // 시간 초과 처리
+                }
+                break;
+
+            // 정비 상태
+            case GameState.Rest:
+                timer += Time.deltaTime;
+                if (timer >= restTime)
+                {
+                    // 정비 시간이 끝나면 다음 웨이브 시작
+                    currentWave++;
+                    StartCombatWave();
+                }
                 break;
 
             case GameState.Clear:
@@ -68,16 +103,119 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // 목표 Enemy 설정
+    public void SetEnemy(GameObject enemy)
+    {
+        curWaveTargetEnemy = enemy;
+        Debug.Log($"{enemy.name}목표 등록");
+    }
+
+    // 에픽 몬스터 잡았을 때 리워드
+    void EpicMobReward(int wave)
+    {
+        Debug.Log($"에픽 몬스터 처치 성공!");
+        curWaveTargetEnemy = null;
+
+        if (wave == 1)
+        {
+            Debug.Log("라이플 획득");
+        }
+        else if (wave == 2)
+        {
+            Debug.Log("공격력 상승");
+        }
+        else if (wave == 3)
+        {
+            Debug.Log("공격력 상승");
+        }
+        else if (wave == 4) // 보스(4웨이브)를 잡았을 때
+        {
+            ClearGame();
+        }
+    }
+
+    void OnWaveTimeUp(int wave)
+    {
+        // 웨이브 4 인데 시간이 다 되었다면
+        if (wave == 4)
+        {
+            // 보스가 아직 살아있다면
+            if (curWaveTargetEnemy != null)
+            {
+                Debug.Log("시간 초과 게임 오버");
+                EndGame();
+            }
+        }
+        else // 1~3 웨이브인데 시간이 다 되었다면
+        {
+            // 다음 정비 시간으로 이동
+            StartRestWave();
+        }
+    }
+
     public void StartGame()
     {
         Debug.Log("게임 시작");
-        currentState = GameState.Playing;
         timer = 0f;
+        currentWave = 1;
+
+        curWaveTargetEnemy = null;
+
+        StartCombatWave(); // 첫 전투 웨이브 시작
+    }
+
+    void StartCombatWave()
+    {
+        Debug.Log($"웨이브 {currentWave} 시작");
+        currentState = GameState.Playing;
+        timer = 0f; // 전투 타이머 초기화
+        curWaveTargetEnemy = null; // 새 웨이브 목표 초기화
+
         stateText.text = "Survive!";
-        stageText.text = "Stage : 1";
+        stageText.text = $"Stage : {currentWave}";
 
         if (spawner != null)
-            spawner.StartSpawn();
+            spawner.StartWave(currentWave); // 스포너에 웨이브 시작 알림
+    }
+
+    void ClearAllEnemies()
+    {
+        for (int i = enemies.Count - 1; i >= 0; i--)
+        {
+            if (enemies[i] != null)
+            {
+                Destroy(enemies[i]);
+            }
+        }
+        enemies.Clear();
+    }
+
+    // 정비 웨이브 시작 함수
+    void StartRestWave()
+    {
+        Debug.Log("정비 웨이브 시작");
+        currentState = GameState.Rest;
+        timer = 0f; // 정비 타이머 초기화
+
+        ClearAllEnemies();
+
+        stateText.text = "Prepare for next wave...";
+        stateText.text = $"Resting...";
+
+        if (spawner != null)
+            spawner.StopSpawn(); // 정비 시간 동안 스폰 중지
+    }
+
+    public void ClearGame()
+    {
+        Debug.Log("게임 클리어");
+        currentState = GameState.Clear;
+        stateText.text = "Victory!\nPress R to Restart";
+
+        ClearAllEnemies();
+
+        if (spawner != null)
+            spawner.StopSpawn();
     }
 
     public void EndGame()
@@ -86,28 +224,21 @@ public class GameManager : MonoBehaviour
         currentState = GameState.GameOver;
         stateText.text = "Game Over\nPress R to Restart";
 
-        if (spawner != null)
-            spawner.StopSpawn();
-    }
-
-    public void ClearStage()
-    {
-        Debug.Log("스테이지 클리어!");
-        currentState = GameState.Clear;
-        stateText.text = "Stage Clear!\nPress R to Restart";
+        ClearAllEnemies();
 
         if (spawner != null)
             spawner.StopSpawn();
     }
+
 
     public void Restart()
     {
         Debug.Log("게임 재시작");
-        enemies.Clear();
+        ClearAllEnemies();
         timer = 0f;
+        currentWave = 1;
         currentState = GameState.Ready;
         stateText.text = "Press Space to Start";
         stageText.text = "Stage : 1";
     }
-    
 }

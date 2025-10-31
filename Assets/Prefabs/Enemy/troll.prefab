@@ -2310,18 +2310,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd4dbaac889119841bd7bc525429d5a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isEpicMonster: 0
+  _waveNumber: 0
   rb: {fileID: 5273127379913336691}
   animator: {fileID: 3628679164989051990}
   mainCollider: {fileID: 8889772088871847418}
   _maxHealth: 100
   moveSpeed: 3
   rotationSpeed: 5
-  chaseRange: 10
+  chaseRange: 100
   attackRange: 4
   retreatFactor: 1.5
   hitboxActiveTime: 1
   attackCooldown: 1.5
   attackDelayTime: 1
+  stunDuration: 0.5
   attackHitbox: {fileID: 3808722057978163214}
 --- !u!136 &8889772088871847418
 CapsuleCollider:

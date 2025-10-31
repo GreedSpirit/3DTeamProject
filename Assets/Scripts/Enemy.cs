@@ -13,6 +13,10 @@ public enum EnemyState
 }
 public class Enemy : MonoBehaviour
 {
+    [Header("Reward")]
+    [SerializeField] private bool _isEpicMonster = false; // 이 몬스터가 에픽 몬스터인가?
+    [SerializeField] private int _waveNumber = 0; // 이 몬스터가 속한 웨이브 번호 (1, 2, 3...)
+
     [Header("Component")]
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Animator animator;
@@ -41,9 +45,11 @@ public class Enemy : MonoBehaviour
     //상태 변수
     private EnemyState _currentState = EnemyState.Idle; // 몬스터의 현재 AI 상태
     private Transform _targetPlayer; // 플레이어 Transform
+    private PlayerController _playerController; // PlayerController 컴포넌트 참조 변수
     private bool _isPerformingAttack = false; // 공격 중인지 체크
     private Coroutine _currentAttackCoroutine; // 현재 공격 코루틴을 저장할 변수
     private Coroutine _currentStunCoroutine; // 경직 코루틴 변수 추가
+
     public EnemyState CurrentState => _currentState;
 
     void Awake()
@@ -52,8 +58,13 @@ public class Enemy : MonoBehaviour
         CurrentHealth = MaxHealth;
         if (rb == null) rb = GetComponent<Rigidbody>(); // 안정성을 위한 조건부 설정
 
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player"); //나중에 player 담당자와 태그/이름 맞춰야함
-        if (playerObj != null) _targetPlayer = playerObj.transform; 
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            _targetPlayer = playerObj.transform;
+            // PlayerController 컴포넌트를 찾아서 저장
+            _playerController = playerObj.GetComponent<PlayerController>();
+        }
     }
     void FixedUpdate()
     {
@@ -273,6 +284,13 @@ public class Enemy : MonoBehaviour
         rb.isKinematic = true; // 사망 후 물리 효과 중지
         mainCollider.enabled = false;
         animator.SetTrigger("death");
+        // 보상 로직: 에픽 몬스터 처치 시 보상 지급
+        if (_isEpicMonster && _playerController != null && _waveNumber > 0)
+        {
+            // PlayerController의 보상 지급 함수 호출
+            _playerController.GrantWaveReward(_waveNumber);
+            Debug.Log($"에픽 몬스터 처치됨. Wave {_waveNumber} 보상 지급 요청.");
+        }
         Destroy(gameObject, 5f);
     }
 }
