@@ -8,13 +8,13 @@ public class InteractSpawn : MonoBehaviour
     public enum InteractType
     {
         BulletBox,
-        Healkit,    
+        Healkit,
         Rand,
     }
     List<Transform> _transforms = new List<Transform>();
-    [SerializeField] private GameObject[] _InteractablePrefabs;
+    [SerializeField] private InteractObject[] _InteractablePrefabs;
 
-    private List<GameObject> _InteractableObjects = new List<GameObject>();
+    private List<InteractObject> _InteractableObjects = new List<InteractObject>();
 
 
     void Start()
@@ -56,23 +56,30 @@ public class InteractSpawn : MonoBehaviour
             Index = (int)type;
         }
         int positionRand = Random.Range(0, _transforms.Count);
-        foreach (GameObject inter in _InteractableObjects)
+        foreach (InteractObject inter in _InteractableObjects)
         {
-            if (!inter.activeSelf)
+            if (!inter.gameObject.activeSelf)
             {
-                inter.SetActive(true);
-                inter.transform.position = _transforms[positionRand].position; 
-                return;
+                if ((inter is BulletBox && type == InteractType.BulletBox) ||
+                    inter is HealKit && type == InteractType.Healkit)
+                {
+
+                    inter.transform.position = _transforms[positionRand].position;
+                    inter.ResetObject();
+                    inter.gameObject.SetActive(true);
+                    return;
+                }
             }
         }
-        GameObject obj = Instantiate(_InteractablePrefabs[Index], _transforms[positionRand]);
+        InteractObject obj = Instantiate<InteractObject>(_InteractablePrefabs[Index], _transforms[positionRand]);
         _InteractableObjects.Add(obj);
     }
     public void DisActiveAll()
     {
-        foreach (GameObject inter in _InteractableObjects)
+        foreach (InteractObject inter in _InteractableObjects)
         {
-            inter.SetActive(false);
+            inter.ResetObject();
+            inter.gameObject.SetActive(false);
         }
     }
 }

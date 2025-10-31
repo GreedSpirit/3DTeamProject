@@ -36,6 +36,7 @@ Transform:
   - {fileID: 3761423752196917022}
   - {fileID: 8938345172752722181}
   - {fileID: 6975047740192839937}
+  - {fileID: 8767372601628855880}
   - {fileID: 7101210275766661129}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -52,11 +53,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _InteractablePrefabs:
-  - {fileID: 7656201903076266855, guid: d472573e35af7904dbfcebe9a545c882, type: 3}
-  - {fileID: 3162076188565525739, guid: 4c92caf0085704a42826db8487d03a28, type: 3}
-  _RandAmount: 3
-  _healKitAmount: 3
-  _BulletBoxAmount: 3
+  - {fileID: 2236498130010985459, guid: d472573e35af7904dbfcebe9a545c882, type: 3}
+  - {fileID: 2461442928571137120, guid: 4c92caf0085704a42826db8487d03a28, type: 3}
 --- !u!1 &4812037611657372697
 GameObject:
   m_ObjectHideFlags: 0
@@ -215,11 +213,11 @@ Transform:
   m_GameObject: {fileID: 5751315497924576211}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -9}
+  m_LocalPosition: {x: -9, y: 0, z: -9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7101210275766661129}
+  m_Father: {fileID: 4824244112349659988}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3799481237074363794
 MonoBehaviour:
@@ -306,8 +304,7 @@ Transform:
   m_LocalPosition: {x: -9, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8767372601628855880}
+  m_Children: []
   m_Father: {fileID: 4824244112349659988}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1201859356714035689
