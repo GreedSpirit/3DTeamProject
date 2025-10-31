@@ -288,6 +288,7 @@ public class Enemy : MonoBehaviour
         // 공격 플래그 리셋 (다음 공격 가능 상태)
         _isPerformingAttack = false;
         _currentAttackCoroutine = null; // 코루틴 참조 해제
+        SetState(EnemyState.Chase);
     }
     
     private void OnHit(Vector3 hitPoint)
