@@ -250,8 +250,6 @@ public class PlayerController : MonoBehaviour
                 return;
             }
             _isWeaponAcquired[rifleIndex] = true;
-
-            Debug.Log("[Reward] 웨이브 1 보상: 라이플을 획득했습니다. 2번 키로 교체할 수 있습니다.");
         }
         else
         {
@@ -275,8 +273,6 @@ public class PlayerController : MonoBehaviour
                 gun.IncreaseDamage(); // Gun.cs의 IncreaseDamage() 호출
             }
         }
-
-        Debug.Log("[Reward] 웨이브 2 보상: 모든 무기의 공격력이 상승했습니다.");
     }
 
     private void IncreaseMagazineCapacity()
@@ -295,8 +291,6 @@ public class PlayerController : MonoBehaviour
                 gun.IncreaseClipSize(); 
             }
         }
-
-        Debug.Log("[Reward] 웨이브 3 보상: 모든 무기의 탄창 크기가 증가했습니다.");
     }
 
     void Death()//점점 넘어지기
@@ -345,7 +339,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if (Input.GetKeyDown((_weaponKeys[i])) && i < _weaponList.Count && _weaponList[i] != null && !_isWeaponAcquired[i])
                 {
-                    Debug.Log($"[Weapon] {i + 1}번 무기는 아직 획득하지 못했습니다.");
+                    
                 }
             }
         }
@@ -440,7 +434,6 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftControl) && !_isRolling)
         {
-            Debug.Log("roll");
             StartCoroutine(Rolling());
         }
     }
@@ -467,7 +460,6 @@ public class PlayerController : MonoBehaviour
         {
             if (inter._isInteract)
             {
-                Debug.Log("상호작용 가능");
                 if (Input.GetKeyDown(KeyCode.F))
                 {
                     if (inter is BulletBox && inter.Use())
@@ -477,11 +469,9 @@ public class PlayerController : MonoBehaviour
 
                             g.RefillAmmo();
                         }
-                        Debug.Log("탄약 보충");
                     }
                     if (inter is HealKit && inter.Use())
                     {
-                        Debug.Log("체력 회복");
                         RecoverHp(inter.GetValue());
                     }
                 }

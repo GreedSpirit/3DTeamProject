@@ -47,7 +47,6 @@ public class ResolutionContorller : MonoBehaviour
         resolutionDropdown.AddOptions(new List<string>(options));
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
-        SetResolution();
     }
 
     public void SetResolution()
@@ -56,8 +55,6 @@ public class ResolutionContorller : MonoBehaviour
         Resolution resolution = resolutions[resolutionIndex];
 
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
-
-        Debug.Log(Screen.width + " X " + Screen.height);
     }
 
     private void SetUpToggle()

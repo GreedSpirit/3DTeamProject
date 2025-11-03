@@ -86,9 +86,9 @@ public class Gun : MonoBehaviour
         if (_currentAmmo <= 0)
         {
             // 남은 예비 탄약이 없을 경우
-            if (_maxAmmo <= 0)
+            if (_maxAmmo >= 1)
             {
-                Debug.Log("남은 탄약이 없습니다.");
+                StartCoroutine(ReloadCoroutine());
             }
             return false;
         }
@@ -115,8 +115,7 @@ public class Gun : MonoBehaviour
 
         _currentAmmo--;
         NotifyBulletChanged();
-
-        Debug.Log($"{_currentAmmo} / {_maxAmmo} ");
+        
         anim.SetTrigger("Idle");
 
         // 발사 성공 true 반환
@@ -128,7 +127,7 @@ public class Gun : MonoBehaviour
         // 맞은 오브젝트의 Tag가 Enemy일 경우
         if (hitInfo.collider.gameObject.CompareTag("Enemy"))
         {
-            Debug.Log("Enemy Hit");
+            //Debug.Log("Enemy Hit");
 
             // 몬스터의 Enemy 컴포넌트를 가져옵니다.
             Enemy enemy = hitInfo.collider.GetComponent<Enemy>();
@@ -146,21 +145,21 @@ public class Gun : MonoBehaviour
     {
         if (isReloading)
         {
-            Debug.Log("이미 장전 중입니다.");
+            //Debug.Log("이미 장전 중입니다.");
             return;
         }
 
         // 탄창이 꽉 찼을 경우
         if (_currentAmmo == _clipSize)
         {
-            Debug.Log("이미 탄창이 꽉 찼습니다.");
+            //Debug.Log("이미 탄창이 꽉 찼습니다.");
             return;
         }
 
         // 남은 탄약이 없을 경우
         if (_maxAmmo <= 0)
         {
-            Debug.Log("남은 탄약이 없습니다.");
+            //Debug.Log("남은 탄약이 없습니다.");
             return;
         }
 
@@ -174,19 +173,19 @@ public class Gun : MonoBehaviour
         // 탄창이 꽉 찼을 경우
         if (_currentAmmo == _clipSize)
         {
-            Debug.Log("이미 탄창이 꽉 찼습니다.");
+            //Debug.Log("이미 탄창이 꽉 찼습니다.");
             isReloading = false;
             yield break;
         }
         // 남은 탄약이 없을 경우
         if (_maxAmmo <= 0)
         {
-            Debug.Log("남은 탄약이 없습니다.");
+            //Debug.Log("남은 탄약이 없습니다.");
             isReloading = false;
             yield break;
         }
 
-        Debug.Log("장전 시작");
+        //Debug.Log("장전 시작");
 
         anim.SetTrigger("Reload");
 
@@ -215,8 +214,8 @@ public class Gun : MonoBehaviour
         _currentAmmo += ReloadAmmo;
         NotifyBulletChanged();
 
-        Debug.Log("장전 끝");
-        Debug.Log($"{_currentAmmo} / {_maxAmmo}");
+        //Debug.Log("장전 끝");
+        //Debug.Log($"{_currentAmmo} / {_maxAmmo}");
 
         isReloading = false;
         anim.SetTrigger("Idle");
@@ -227,7 +226,7 @@ public class Gun : MonoBehaviour
     {
         if (isReloading)
         {
-            Debug.Log("장전 취소됨");
+            //Debug.Log("장전 취소됨");
             // PlayerController가 전달한 코루틴을 중지
             
 
@@ -264,7 +263,6 @@ public class Gun : MonoBehaviour
     public void IncreaseDamage()
     {
         _damage += _attackIncreaseAmount;
-        Debug.Log($"[Gun] 공격력 상승: 현재 데미지 {_damage}");
     }
 
     // 웨이브 3 보상: 탄창 증가
@@ -286,7 +284,6 @@ public class Gun : MonoBehaviour
         }
 
         NotifyBulletChanged();
-        Debug.Log($"[Gun] 탄창 크기 상승: 현재 탄창 크기 {_clipSize}");
     }
 
 }

@@ -117,9 +117,7 @@ public class EnemySpawner : MonoBehaviour
         GameManager.Instance.enemies.Add(epic);
 
         GameManager.Instance.SetEnemy(epic);
-        GameManager.Instance.EpicOutput("에픽 몬스터가 등장했습니다. 처치하고 보상을 획득하세요!");
-
-        Debug.Log("에픽 몬스터 등장!");
+        GameManager.Instance.EpicOutput("Epic Monster Appeared. Slay it for Rewards!");
     }
 
     /// <summary>
@@ -136,9 +134,7 @@ public class EnemySpawner : MonoBehaviour
         GameManager.Instance.enemies.Add(boss);
 
         GameManager.Instance.SetEnemy(boss);
-        GameManager.Instance.EpicOutput("보스 트롤이 등장했습니다. 행운을 빕니다!");
-
-        Debug.Log("보스 트롤 등장!");
+        GameManager.Instance.EpicOutput("The Boss Troll Appeared. Good Luck!");
     }
 
     public void StartSpawn()
@@ -154,7 +150,6 @@ public class EnemySpawner : MonoBehaviour
 
     public void StartWave(int wave)
     {
-        Debug.Log($"웨이브 {wave} 시작: 적 스폰 시작!");
         currentWaveForSpawner = wave;
         StartSpawn();
         bossSpawned = false;
